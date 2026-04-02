@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JEE Maths Syllabus Analyzer</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-primary:#ffffff;--bg-secondary:#f5f5f4;--bg-tertiary:#eeede8;
+  --text-primary:#1a1a18;--text-secondary:#5f5e5a;--text-tertiary:#888780;
+  --border-light:rgba(0,0,0,0.1);--border-mid:rgba(0,0,0,0.18);
+  --radius-md:8px;--radius-lg:12px;
+  --font:'Segoe UI',system-ui,sans-serif;--font-mono:'Fira Code','Consolas',monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg-primary:#1c1c1a;--bg-secondary:#252523;--bg-tertiary:#2e2e2b;
+    --text-primary:#f0ede8;--text-secondary:#a8a7a2;--text-tertiary:#6e6d69;
+    --border-light:rgba(255,255,255,0.08);--border-mid:rgba(255,255,255,0.15);
+  }
+}
+body{font-family:var(--font);background:var(--bg-tertiary);color:var(--text-primary);min-height:100vh;padding:2rem 1rem}
+.root{max-width:960px;margin:0 auto}
+.top-bar{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem;border-bottom:0.5px solid var(--border-light);padding-bottom:.75rem}
+.top-bar h1{font-size:20px;font-weight:500;letter-spacing:-0.3px}
+.top-bar span{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:2px}
+.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
+.stat-box{background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;text-align:center}
+.stat-box .sv{font-size:20px;font-weight:500}
+.stat-box .sl{font-size:10px;color:var(--text-tertiary);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
+@media(max-width:620px){.grid-4{grid-template-columns:1fr 1fr}.stat-row{grid-template-columns:1fr 1fr}}
+.branch-card{background:var(--bg-secondary);border-radius:var(--radius-lg);padding:.85rem 1rem;cursor:pointer;border:1.5px solid transparent;transition:border-color .2s}
+.branch-card.active{border-color:var(--acc)}
+.bc-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.3rem}
+.bc-pct{font-size:26px;font-weight:500;line-height:1}
+.bc-name{font-size:12px;color:var(--text-secondary);margin-top:3px}
+.bc-bar{height:2px;border-radius:2px;margin-top:8px;background:var(--border-light)}
+.bc-fill{height:2px;border-radius:2px}
+.detail-panel{background:var(--bg-secondary);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;display:none}
+.detail-panel.visible{display:block}
+.dp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.dp-title{font-size:15px;font-weight:500}
+.dp-close{font-size:16px;cursor:pointer;color:var(--text-secondary);background:none;border:none;color:var(--text-primary)}
+.dp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.dp-card{background:var(--bg-primary);border:0.5px solid var(--border-light);border-radius:var(--radius-md);padding:10px}
+.dc-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary)}
+.dc-val{font-size:14px;font-weight:500;margin-top:3px}
+.dp-topics{margin-top:.75rem}
+.dp-formulas{margin-top:.75rem}
+.t-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary);margin-bottom:5px}
+.t-tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:100px;background:var(--bg-primary);border:0.5px solid var(--border-mid);color:var(--text-secondary);margin:2px 2px 2px 0}
+.f-tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:100px;background:var(--bg-tertiary);border:0.5px solid var(--border-light);color:var(--text-primary);margin:2px 2px 2px 0;font-family:var(--font-mono)}
+.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+@media(max-width:620px){.mid-row{grid-template-columns:1fr}}
+.panel{background:var(--bg-primary);border:0.5px solid var(--border-light);border-radius:var(--radius-lg);padding:1rem 1.25rem}
+.panel-title{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:.85rem}
+.unit-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border-light);cursor:pointer;transition:opacity .15s}
+.unit-row:hover{opacity:.7}
+.unit-row:last-child{border-bottom:none}
+.unit-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.unit-name{flex:1;font-size:12px}
+.unit-pct{font-size:11px;color:var(--text-secondary);white-space:nowrap}
+.unit-stars{font-size:9px;color:#EF9F27}
+.unit-bar-wrap{width:50px;background:var(--border-light);height:2px;border-radius:2px}
+.unit-bar{height:2px;border-radius:2px}
+.priority-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.p-tier{border-radius:var(--radius-md);padding:8px 10px}
+.p-tier .tier-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:5px}
+.p-tier .tier-items{font-size:11px;line-height:1.8}
+.p-top{background:#FAECE7}.p-top .tier-label{color:#993C1D}.p-top .tier-items{color:#712B13}
+.p-mid{background:#FAEEDA}.p-mid .tier-label{color:#854F0B}.p-mid .tier-items{color:#633806}
+.p-low{background:#EAF3DE}.p-low .tier-label{color:#3B6D11}.p-low .tier-items{color:#27500A}
+@media(prefers-color-scheme:dark){
+  .p-top{background:#4A1B0C}.p-top .tier-label{color:#F0997B}.p-top .tier-items{color:#F5C4B3}
+  .p-mid{background:#412402}.p-mid .tier-label{color:#EF9F27}.p-mid .tier-items{color:#FAC775}
+  .p-low{background:#173404}.p-low .tier-label{color:#639922}.p-low .tier-items{color:#97C459}
+}
+.formula-scroll{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
+.formula-item{background:var(--bg-secondary);border-radius:var(--radius-md);padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.f-name{font-size:11px;color:var(--text-secondary)}
+.f-eq{font-size:12px;font-weight:500;font-family:var(--font-mono)}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+@media(max-width:620px){.bottom-row{grid-template-columns:1fr}}
+.chart-wrap{position:relative;width:100%;height:200px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;font-size:11px;color:var(--text-secondary)}
+.leg-dot{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:3px}
+</style>
+</head>
+<body>
+<div class="root">
+
+<div class="top-bar">
+  <h1>JEE Maths — Syllabus Analysis</h1>
+  <span>16 Units · 4 Branches</span>
+</div>
+
+<div class="stat-row">
+  <div class="stat-box"><div class="sv">16</div><div class="sl">Total Units</div></div>
+  <div class="stat-box"><div class="sv">5</div><div class="sl">Star Units</div></div>
+  <div class="stat-box"><div class="sv">~100%</div><div class="sl">Syllabus</div></div>
+  <div class="stat-box"><div class="sv">35–40%</div><div class="sl">Calculus Wt.</div></div>
+</div>
+
+<div class="grid-4" id="branchCards">
+  <div class="branch-card active" data-branch="calc" style="--acc:#7F77DD" onclick="setBranch('calc',this)">
+    <div class="bc-label">Branch 01</div>
+    <div class="bc-pct">38%</div>
+    <div class="bc-name">Calculus</div>
+    <div class="bc-bar"><div class="bc-fill" style="width:100%;background:#7F77DD"></div></div>
+  </div>
+  <div class="branch-card" data-branch="alg" style="--acc:#1D9E75" onclick="setBranch('alg',this)">
+    <div class="bc-label">Branch 02</div>
+    <div class="bc-pct">32%</div>
+    <div class="bc-name">Algebra</div>
+    <div class="bc-bar"><div class="bc-fill" style="width:84%;background:#1D9E75"></div></div>
+  </div>
+  <div class="branch-card" data-branch="coord" style="--acc:#D85A30" onclick="setBranch('coord',this)">
+    <div class="bc-label">Branch 03</div>
+    <div class="bc-pct">22%</div>
+    <div class="bc-name">Coordinate Geometry</div>
+    <div class="bc-bar"><div class="bc-fill" style="width:58%;background:#D85A30"></div></div>
+  </div>
+  <div class="branch-card" data-branch="vect" style="--acc:#BA7517" onclick="setBranch('vect',this)">
+    <div class="bc-label">Branch 04</div>
+    <div class="bc-pct">12%</div>
+    <div class="bc-name">Vector / 3D / Probability</div>
+    <div class="bc-bar"><div class="bc-fill" style="width:32%;background:#BA7517"></div></div>
+  </div>
+</div>
+
+<div id="detailPanel" class="detail-panel">
+  <div class="dp-header">
+    <div class="dp-title" id="dpTitle">Unit Detail</div>
+    <button class="dp-close" onclick="document.getElementById('detailPanel').classList.remove('visible')">✕</button>
+  </div>
+  <div class="dp-grid" id="dpGrid"></div>
+  <div class="dp-topics" id="dpTopics"></div>
+  <div class="dp-formulas" id="dpFormulas"></div>
+</div>
+
+<div class="mid-row">
+  <div class="panel">
+    <div class="panel-title" id="unitsTitle">Calculus — Units</div>
+    <div id="unitsList"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Priority Tiers</div>
+    <div class="priority-grid">
+      <div class="p-tier p-top">
+        <div class="tier-label">Top</div>
+        <div class="tier-items">Integration<br>AOD<br>Conics<br>Complex<br>PnC</div>
+      </div>
+      <div class="p-tier p-mid">
+        <div class="tier-label">Mid</div>
+        <div class="tier-items">Matrices<br>Sequence<br>Straight Line<br>Probability<br>Limits</div>
+      </div>
+      <div class="p-tier p-low">
+        <div class="tier-label">Low</div>
+        <div class="tier-items">Binomial<br>3D Geometry<br>Statistics<br>Vectors</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-row">
+  <div class="panel">
+    <div class="panel-title">Weight Distribution</div>
+    <div class="legend">
+      <span><span class="leg-dot" style="background:#7F77DD"></span>Calculus 38%</span>
+      <span><span class="leg-dot" style="background:#1D9E75"></span>Algebra 32%</span>
+      <span><span class="leg-dot" style="background:#D85A30"></span>Coord. Geom. 22%</span>
+      <span><span class="leg-dot" style="background:#BA7517"></span>Vec/3D/Prob 12%</span>
+    </div>
+    <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Key Formulas — All Branches</div>
+    <div class="formula-scroll" id="formulaList"></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:1.25rem">
+  <div class="panel-title">Unit-wise Weightage (avg %)</div>
+  <div id="barWrap" class="chart-wrap" style="height:320px"><canvas id="barChart"></canvas></div>
+</div>
+
+</div><!-- .root -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const BRANCHES={
+  calc:{label:'Calculus',color:'#7F77DD',units:[
+    {name:'Integration',pct:12,stars:3,priority:'top',
+      topics:['Indefinite — Substitution','Integration by Parts','Partial Fractions','Definite Integrals','Properties of Definite Integrals','Area under Curve'],
+      formulas:['∫xⁿ dx = xⁿ⁺¹/(n+1) + C','∫eˣ dx = eˣ + C','∫(1/x) dx = ln|x| + C','∫u dv = uv - ∫v du (IBP)','∫₀ᵃ f(x)dx = ∫₀ᵃ f(a-x)dx','∫sin x dx = -cos x + C','∫cos x dx = sin x + C','∫tan x dx = ln|sec x| + C','∫sec²x dx = tan x + C']},
+    {name:'Application of Derivatives',pct:9,stars:1,priority:'top',
+      topics:['Monotonicity','Maxima & Minima','Tangent & Normal','Rate of Change','Rolle\'s & Mean Value Thm'],
+      formulas:['Slope of tangent = dy/dx','Normal slope = -dx/dy','f\'(x)=0 → critical point','f\'\'(x)>0 → local min','f\'\'(x)<0 → local max','|dy/dx| = rate of change']},
+    {name:'Differentiation',pct:8,stars:0,priority:'mid',
+      topics:['Chain Rule','Implicit Differentiation','Inverse Trig Derivatives','Parametric Differentiation','Higher Order Derivatives','Logarithmic Differentiation'],
+      formulas:['d/dx(xⁿ) = nxⁿ⁻¹','d/dx(eˣ) = eˣ','d/dx(ln x) = 1/x','d/dx(sin x) = cos x','d/dx(cos x) = -sin x','d/dx(tan x) = sec²x','d/dx(sin⁻¹x) = 1/√(1-x²)','Chain: d/dx[f(g(x))] = f\'(g(x))·g\'(x)']},
+    {name:'Limits & Continuity',pct:6,stars:0,priority:'mid',
+      topics:['Standard Limits','L\'Hôpital\'s Rule','Sandwich Theorem','Continuity at a Point','Differentiability'],
+      formulas:['lim(x→0) sin x/x = 1','lim(x→0) (eˣ-1)/x = 1','lim(x→0) (aˣ-1)/x = ln a','lim(x→∞)(1+1/x)ˣ = e','L\'Hopital: lim f/g = lim f\'/g\'']},
+    {name:'Differential Equations',pct:4,stars:0,priority:'mid',
+      topics:['Variable Separable','Linear DE','Homogeneous DE'],
+      formulas:['dy/dx = f(x)·g(y) → separate','Linear: dy/dx + Py = Q','IF = e^(∫P dx)','Solution: y·IF = ∫Q·IF dx']},
+  ]},
+  alg:{label:'Algebra',color:'#1D9E75',units:[
+    {name:'Complex Numbers',pct:9,stars:1,priority:'top',
+      topics:['Argand Plane','Modulus & Argument','Locus Problems','De Moivre\'s Theorem','Roots of Unity','Cube Roots of Unity'],
+      formulas:['z = a + ib','|z| = √(a²+b²)','arg(z) = tan⁻¹(b/a)','z·z̄ = |z|²','e^(iθ) = cos θ + i sin θ','De Moivre: (cosθ+i sinθ)ⁿ = cos(nθ)+i sin(nθ)','Cube roots of unity: 1+ω+ω²=0']},
+    {name:'Permutation & Combination',pct:8,stars:1,priority:'top',
+      topics:['Fundamental Counting','Permutations ⁿPᵣ','Combinations ⁿCᵣ','Circular Permutations','Distribution Problems','Derangements'],
+      formulas:['ⁿPᵣ = n!/(n-r)!','ⁿCᵣ = n!/[r!(n-r)!]','Circular perm = (n-1)!','ⁿCᵣ = ⁿCₙ₋ᵣ','ⁿCᵣ + ⁿCᵣ₋₁ = ⁿ⁺¹Cᵣ','Derangement Dₙ = n!·Σ(-1)ᵏ/k!']},
+    {name:'Matrices & Determinants',pct:7,stars:0,priority:'mid',
+      topics:['Matrix Operations','Determinant Properties','Inverse of a Matrix','Cramer\'s Rule','System of Equations'],
+      formulas:['det(AB) = det(A)·det(B)','A·A⁻¹ = I','A⁻¹ = adj(A)/det(A)','Cramer\'s: x = Dₓ/D','Cayley-Hamilton theorem']},
+    {name:'Sequence & Series',pct:7,stars:0,priority:'mid',
+      topics:['AP','GP','HP','AGP','Sum of Special Series'],
+      formulas:['AP: aₙ = a+(n-1)d','AP Sₙ = n/2[2a+(n-1)d]','GP: aₙ = arⁿ⁻¹','GP Sₙ = a(rⁿ-1)/(r-1)','GP S∞ = a/(1-r), |r|<1','Σn = n(n+1)/2','Σn² = n(n+1)(2n+1)/6','Σn³ = [n(n+1)/2]²']},
+    {name:'Binomial Theorem',pct:4,stars:0,priority:'low',
+      topics:['General Term','Middle Term','Coefficient Problems','Greatest Term'],
+      formulas:['(a+b)ⁿ = Σ ⁿCᵣ aⁿ⁻ʳ bʳ','Tᵣ₊₁ = ⁿCᵣ aⁿ⁻ʳ bʳ','Middle term (n even): T_(n/2+1)','(1+x)ⁿ ≈ 1+nx for small x']},
+  ]},
+  coord:{label:'Coordinate Geometry',color:'#D85A30',units:[
+    {name:'Conic Sections',pct:11,stars:2,priority:'top',
+      topics:['Parabola','Ellipse','Hyperbola','Tangent & Normal to Conics','Chord of Contact','Asymptotes of Hyperbola'],
+      formulas:['Parabola: y²=4ax','Parabola tangent: y=mx+a/m','Ellipse: x²/a²+y²/b²=1','Ellipse: b²=a²(1-e²)','Hyperbola: x²/a²-y²/b²=1','Rect. Hyperbola: xy=c²','Focal chord: 1/SP+1/SQ=2/l']},
+    {name:'Straight Lines',pct:6,stars:0,priority:'mid',
+      topics:['Slope','Various Forms of Line','Angle Between Lines','Distance from Point to Line','Family of Lines'],
+      formulas:['m = (y₂-y₁)/(x₂-x₁)','y-y₁ = m(x-x₁)','d=|ax₁+by₁+c|/√(a²+b²)','tan θ = |(m₁-m₂)/(1+m₁m₂)|','m₁=m₂ → parallel','m₁·m₂=-1 → perpendicular']},
+    {name:'Circle',pct:5,stars:0,priority:'mid',
+      topics:['Standard & General Form','Tangent to Circle','Chord of Contact','Radical Axis','Common Chord'],
+      formulas:['(x-h)²+(y-k)²=r²','x²+y²+2gx+2fy+c=0','Centre:(-g,-f), r=√(g²+f²-c)','Tangent at (x₁,y₁): xx₁+yy₁=r²','Length of tangent=√(S₁)','Radical axis: S₁-S₂=0']},
+  ]},
+  vect:{label:'Vector / 3D / Probability',color:'#BA7517',units:[
+    {name:'Probability',pct:6,stars:0,priority:'mid',
+      topics:['Classical Probability','Conditional Probability','Bayes\' Theorem','Random Variables','Binomial Distribution'],
+      formulas:['P(A∪B)=P(A)+P(B)-P(A∩B)','P(A|B)=P(A∩B)/P(B)','Bayes: P(Aᵢ|B)=P(B|Aᵢ)P(Aᵢ)/ΣP(B|Aⱼ)P(Aⱼ)','E(X)=Σxᵢ·P(xᵢ)','Binomial P(X=r)=ⁿCᵣ pʳ qⁿ⁻ʳ','Mean=np, Var=npq']},
+    {name:'Vectors',pct:4,stars:0,priority:'low',
+      topics:['Dot Product','Cross Product','Scalar Triple Product','Vector Triple Product'],
+      formulas:['a·b = |a||b|cos θ','a×b = |a||b|sin θ n̂','|a×b|² = |a|²|b|²-(a·b)²','[a b c] = scalar triple product','a×(b×c) = (a·c)b-(a·b)c','Area of △ = ½|a×b|']},
+    {name:'3D Geometry',pct:5,stars:0,priority:'low',
+      topics:['Direction Cosines','Equation of Line in 3D','Equation of Plane','Distance Between Lines','Angle Between Plane & Line'],
+      formulas:['l²+m²+n²=1 (DC condition)','Line: (x-x₁)/l=(y-y₁)/m=(z-z₁)/n','Plane: ax+by+cz+d=0','d=|ax₁+by₁+cz₁+d|/√(a²+b²+c²)','cos θ=|la+mb+nc|/√(a²+b²+c²)']},
+  ]}
+};
+
+const ALL_FORMULAS=[
+  {name:'Integral ∫xⁿ',eq:'∫xⁿ dx = xⁿ⁺¹/(n+1)+C'},
+  {name:'Integration by Parts',eq:'∫u dv = uv − ∫v du'},
+  {name:'Def. Integral Property',eq:'∫₀ᵃ f(x)dx = ∫₀ᵃ f(a−x)dx'},
+  {name:'Derivative xⁿ',eq:'d/dx(xⁿ) = nxⁿ⁻¹'},
+  {name:'Derivative eˣ',eq:'d/dx(eˣ) = eˣ'},
+  {name:'Chain Rule',eq:'d/dx[f(g(x))] = f\'(g(x))·g\'(x)'},
+  {name:'Limit sin/x',eq:'lim(x→0) sinx/x = 1'},
+  {name:'Euler\'s number',eq:'lim(x→∞)(1+1/x)ˣ = e'},
+  {name:'Complex modulus',eq:'|z|² = a² + b²'},
+  {name:'De Moivre',eq:'(cosθ+i sinθ)ⁿ = cos nθ+i sin nθ'},
+  {name:'Permutation',eq:'ⁿPᵣ = n!/(n−r)!'},
+  {name:'Combination',eq:'ⁿCᵣ = n!/[r!(n−r)!]'},
+  {name:'AP Sum',eq:'Sₙ = n/2·[2a+(n−1)d]'},
+  {name:'GP Sum',eq:'Sₙ = a(rⁿ−1)/(r−1)'},
+  {name:'Binomial General Term',eq:'Tᵣ₊₁ = ⁿCᵣ aⁿ⁻ʳ bʳ'},
+  {name:'Matrix Inverse',eq:'A⁻¹ = adj(A)/det(A)'},
+  {name:'Parabola standard',eq:'y² = 4ax'},
+  {name:'Ellipse standard',eq:'x²/a² + y²/b² = 1'},
+  {name:'Hyperbola standard',eq:'x²/a² − y²/b² = 1'},
+  {name:'Circle general',eq:'(x−h)²+(y−k)² = r²'},
+  {name:'Line distance',eq:'d = |ax₁+by₁+c|/√(a²+b²)'},
+  {name:'Dot product',eq:'a·b = |a||b|cosθ'},
+  {name:'Cross product mag.',eq:'|a×b| = |a||b|sinθ'},
+  {name:'Bayes\' Theorem',eq:'P(Aᵢ|B) = P(B|Aᵢ)P(Aᵢ)/ΣP(B|Aⱼ)P(Aⱼ)'},
+  {name:'Binomial Mean/Var',eq:'Mean = np, Var = npq'},
+  {name:'Σn',eq:'Σn = n(n+1)/2'},
+  {name:'Σn²',eq:'Σn² = n(n+1)(2n+1)/6'},
+];
+
+let currentBranch='calc';
+let barChart;
+
+function setBranch(key,el){
+  currentBranch=key;
+  document.querySelectorAll('.branch-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderUnitList();
+  renderBarChart();
+  document.getElementById('detailPanel').classList.remove('visible');
+}
+
+function renderUnitList(){
+  const branch=BRANCHES[currentBranch];
+  document.getElementById('unitsTitle').textContent=branch.label+' — Units';
+  const list=document.getElementById('unitsList');
+  list.innerHTML='';
+  branch.units.forEach(u=>{
+    const maxPct=Math.max(...branch.units.map(x=>x.pct));
+    const stars='★'.repeat(u.stars);
+    const pColor=u.priority==='top'?'#D85A30':u.priority==='mid'?'#BA7517':'#639922';
+    const row=document.createElement('div');
+    row.className='unit-row';
+    row.onclick=()=>showDetail(u,branch.color);
+    row.innerHTML=`
+      <div class="unit-dot" style="background:${branch.color};opacity:${0.5+(u.pct/maxPct)*0.5}"></div>
+      <div class="unit-name">${u.name}</div>
+      ${stars?`<div class="unit-stars">${stars}</div>`:''}
+      <div class="unit-bar-wrap"><div class="unit-bar" style="width:${(u.pct/maxPct)*100}%;background:${pColor}"></div></div>
+      <div class="unit-pct">${u.pct}%</div>`;
+    list.appendChild(row);
+  });
+}
+
+function showDetail(unit,color){
+  const panel=document.getElementById('detailPanel');
+  document.getElementById('dpTitle').textContent=unit.name;
+  const pLabel=unit.priority==='top'?'Top Priority':unit.priority==='mid'?'Mid Priority':'Low Priority';
+  const pColor=unit.priority==='top'?'#D85A30':unit.priority==='mid'?'#BA7517':'#639922';
+  document.getElementById('dpGrid').innerHTML=`
+    <div class="dp-card"><div class="dc-label">Weightage</div><div class="dc-val" style="color:${color}">${unit.pct}%</div></div>
+    <div class="dp-card"><div class="dc-label">Priority</div><div class="dc-val" style="color:${pColor}">${pLabel}</div></div>
+    <div class="dp-card"><div class="dc-label">Stars</div><div class="dc-val" style="color:#EF9F27">${unit.stars?'★'.repeat(unit.stars):'—'}</div></div>
+    <div class="dp-card"><div class="dc-label">Formulas</div><div class="dc-val">${unit.formulas.length}</div></div>`;
+  document.getElementById('dpTopics').innerHTML=`<div class="t-label">Key Topics</div>`+unit.topics.map(t=>`<span class="t-tag">${t}</span>`).join('');
+  document.getElementById('dpFormulas').innerHTML=`<div class="t-label" style="margin-top:.6rem">Important Formulas</div>`+unit.formulas.map(f=>`<span class="f-tag">${f}</span>`).join('');
+  panel.classList.add('visible');
+}
+
+function renderFormulas(){
+  document.getElementById('formulaList').innerHTML=ALL_FORMULAS.map(f=>`
+    <div class="formula-item">
+      <div class="f-name">${f.name}</div>
+      <div class="f-eq">${f.eq}</div>
+    </div>`).join('');
+}
+
+function renderDonut(){
+  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  new Chart(document.getElementById('donutChart').getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels:['Calculus (38%)','Algebra (32%)','Coord. Geom. (22%)','Vec/3D/Prob (12%)'],
+      datasets:[{data:[38,32,22,12],backgroundColor:['#7F77DD','#1D9E75','#D85A30','#BA7517'],borderColor:isDark?'#1c1c1a':'#ffffff',borderWidth:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}},animation:{animateRotate:true,duration:1000}}
+  });
+}
+
+function renderBarChart(){
+  const branch=BRANCHES[currentBranch];
+  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const bgColors=branch.units.map(u=>u.priority==='top'?'#D85A30':u.priority==='mid'?'#BA7517':'#639922');
+  const wrap=document.getElementById('barWrap');
+  wrap.style.height=Math.max(200,branch.units.length*52+80)+'px';
+  if(barChart)barChart.destroy();
+  barChart=new Chart(document.getElementById('barChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:branch.units.map(u=>u.name),
+      datasets:[{label:'Weightage %',data:branch.units.map(u=>u.pct),backgroundColor:bgColors,borderRadius:4,borderSkipped:false}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{
+        x:{grid:{color:isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)'},ticks:{color:isDark?'#aaa':'#666',font:{size:11},callback:v=>v+'%'},border:{display:false}},
+        y:{grid:{display:false},ticks:{color:isDark?'#ccc':'#444',font:{size:11}},border:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+'%'}}},
+      animation:{duration:600}
+    }
+  });
+}
+
+renderUnitList();
+renderFormulas();
+renderDonut();
+renderBarChart();
+</script>
+</body>
+</html>
