@@ -1,354 +1,1230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📐 MATH·SYNTH | Advanced Calculus & Algebra | Minimalist Futuristic Quiz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATH SYNTHESIS | Advanced Quiz 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-    :root {
-      --bg-void: #05070f;
-      --glass-dark: rgba(15, 25, 45, 0.65);
-      --border-tech: rgba(0, 230, 200, 0.35);
-      --neon-silver: #e2f0ff;
-      --neon-ember: #ffbc6e;
-      --quantum-blue: #2b9aff;
-      --plasma-magenta: #d16aff;
-      --txt-bright: #f0f4ff;
-      --txt-fade: #7e8bb6;
-    }
+:root {
+  --bg: #0b0d14;
+  --surface: #111520;
+  --surface2: #161c2e;
+  --border: rgba(120,140,200,0.15);
+  --accent: #5b7fff;
+  --accent2: #a78bfa;
+  --gold: #e2c27d;
+  --red: #f26b6b;
+  --green: #5cc8a0;
+  --text: #dde3f5;
+  --muted: #5a6280;
+  --mono: 'DM Mono', monospace;
+  --serif: 'DM Serif Display', serif;
+  --sans: 'DM Sans', sans-serif;
+}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at 30% 10%, #0a0f1f, #01030a);
-      color: var(--txt-bright);
-      min-height: 100vh;
-    }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
 
-    /* geometric overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.05"><path fill="none" stroke="%232b9aff" stroke-width="0.8" d="M100,200 L300,100 L500,250 L400,450 L150,400 Z M650,600 L850,500 L950,700 L750,850 Z M400,700 L550,650 L600,800 L450,850 Z"/><circle cx="800" cy="200" r="40" stroke="%23ffbc6e" fill="none"/></svg>');
-      background-repeat: repeat;
-      pointer-events: none;
-    }
+/* Subtle grid bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(91,127,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,127,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-    .screen {
-      display: none;
-      position: relative;
-      z-index: 2;
-      animation: slideGlow 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-    .screen.active { display: block; }
-    @keyframes slideGlow {
-      0% { opacity: 0; transform: translateY(14px); filter: blur(2px);}
-      100% { opacity: 1; transform: translateY(0); filter: blur(0);}
-    }
+.screen { display: none; position: relative; z-index: 1; }
+.screen.active { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(18px); } to { opacity:1; transform:translateY(0); } }
 
-    /* glass minimal */
-    .glass-panel {
-      background: var(--glass-dark);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border-tech);
-      border-radius: 2rem;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,230,200,0.1);
-      transition: all 0.2s;
-    }
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
 
-    .btn {
-      font-family: 'Space Grotesk', monospace;
-      font-weight: 600;
-      padding: 0.7rem 1.8rem;
-      border-radius: 3rem;
-      cursor: pointer;
-      transition: 0.2s;
-      border: none;
-      font-size: 0.85rem;
-      letter-spacing: 0.3px;
-    }
-    .btn-primary {
-      background: linear-gradient(115deg, var(--quantum-blue), var(--plasma-magenta));
-      color: #01030f;
-      box-shadow: 0 0 12px rgba(43, 154, 255, 0.5);
-    }
-    .btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(209, 106, 255, 0.6);}
-    .btn-secondary {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(43, 154, 255, 0.5);
-      color: var(--quantum-blue);
-    }
-    .btn-secondary:hover { background: rgba(43, 154, 255, 0.15);}
-    .btn-submit { background: linear-gradient(125deg, #ffbc6e, #f0725c); color: #000;}
+/* ─── START SCREEN ─── */
+#start-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.start-wrap {
+  max-width: 680px;
+  width: 100%;
+}
+.start-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.start-label::before { content:''; display:inline-block; width:24px; height:1px; background:var(--accent); }
+.start-title {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+.start-title em { font-style: italic; color: var(--gold); }
+.start-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 2.4rem;
+  max-width: 480px;
+}
 
-    .opt-btn {
-      width: 100%;
-      background: rgba(8, 15, 30, 0.7);
-      border: 1px solid rgba(43, 154, 255, 0.3);
-      border-radius: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      margin-bottom: 0.7rem;
-      text-align: left;
-      color: var(--txt-bright);
-      font-weight: 500;
-      transition: 0.2s;
-      cursor: pointer;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-    .opt-btn:hover { background: rgba(43, 154, 255, 0.1); border-color: var(--quantum-blue); transform: translateX(6px);}
-    .opt-btn.sel {
-      background: linear-gradient(120deg, rgba(43,154,255,0.2), rgba(209,106,255,0.15));
-      border-color: var(--plasma-magenta);
-      box-shadow: 0 0 12px rgba(209,106,255,0.3);
-    }
-    .opt-letter {
-      width: 30px; height: 30px; border-radius: 30px;
-      background: rgba(43,154,255,0.2);
-      display: inline-flex; align-items: center; justify-content: center;
-      font-weight: 800;
-    }
-    .timer-pill {
-      font-family: 'Space Grotesk';
-      background: #0a0f1fcc;
-      border: 1px solid var(--quantum-blue);
-      border-radius: 40px;
-      padding: 0.3rem 1.2rem;
-    }
-    .q-dot {
-      width: 38px; height: 38px; border-radius: 14px;
-      background: #0f172f;
-      border: 1px solid #2a3f7a;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.08s linear;
-    }
-    .q-dot.cur { background: linear-gradient(145deg, var(--quantum-blue), var(--plasma-magenta)); color: #000; box-shadow: 0 0 10px #2b9aff; transform: scale(1.02);}
-    .q-dot.ans-dot { background: rgba(43,154,255,0.25); border-color: #2b9aff; color: #8ecaff;}
-    .q-dot.skp-dot { background: rgba(255,188,110,0.25); border-color: #ffbc6e; color: #ffbc6e;}
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.stat-cell {
+  background: var(--surface);
+  padding: 1.2rem;
+}
+.stat-val {
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.stat-key {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
 
-    .score-circle {
-      width: 140px; height: 140px; border-radius: 50%;
-      background: conic-gradient(from 0deg, var(--quantum-blue), var(--plasma-magenta));
-      display: flex; align-items: center; justify-content: center; margin: 0 auto;
-      box-shadow: 0 0 35px rgba(43,154,255,0.4);
-    }
-    .rev-item {
-      border-left: 5px solid transparent;
-      background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
-      border-radius: 1.2rem; margin-bottom: 1rem; padding: 1rem;
-    }
-    .rev-item.correct { border-left-color: #2effb0; }
-    .rev-item.wrong { border-left-color: #ff5a7c; }
-    .rev-item.skipped { border-left-color: #ffbc6e; }
-    h1, h2, h3 { font-family: 'Space Grotesk', monospace; font-weight: 600; letter-spacing: -0.02em; }
-  </style>
+.topics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+.topic-tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  color: var(--muted);
+}
+
+.btn-start {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-start:hover { background: #4a6ef0; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(91,127,255,0.3); }
+
+/* ─── QUIZ SCREEN ─── */
+#quiz-screen { padding: 1.5rem 1rem; }
+.quiz-inner { max-width: 960px; margin: 0 auto; }
+
+.quiz-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 1.2rem;
+}
+.q-progress-label {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.q-progress-label span { color: var(--text); font-weight: 500; }
+.timer-box {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.3rem 0.9rem;
+  transition: 0.3s;
+}
+.timer-box.warn { color: var(--red); border-color: rgba(242,107,107,0.4); }
+
+/* progress bar */
+.prog-bar-wrap { height: 2px; background: var(--border); margin-bottom: 1.2rem; border-radius: 2px; }
+.prog-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
+
+/* question card */
+.q-card { padding: 2rem; }
+.q-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+.q-num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.25rem 0.7rem;
+}
+.q-topic-tag {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  background: rgba(91,127,255,0.1);
+  border: 1px solid rgba(91,127,255,0.25);
+  border-radius: 6px;
+  padding: 0.25rem 0.7rem;
+  letter-spacing: 0.06em;
+}
+.q-yr {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--gold);
+  margin-left: auto;
+}
+.q-status-badge {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.q-status-badge.answered { color: var(--green); border-color: rgba(92,200,160,0.35); background: rgba(92,200,160,0.06); }
+.q-status-badge.skipped  { color: var(--gold); border-color: rgba(226,194,125,0.35); background: rgba(226,194,125,0.06); }
+
+.q-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 2rem;
+  font-family: var(--sans);
+  letter-spacing: 0.01em;
+}
+
+/* Options */
+.opt-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+.opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: 0.15s;
+  text-align: left;
+}
+.opt-btn:hover:not(:disabled) {
+  border-color: rgba(91,127,255,0.5);
+  background: rgba(91,127,255,0.06);
+  transform: translateX(4px);
+}
+.opt-btn.sel {
+  border-color: var(--accent);
+  background: rgba(91,127,255,0.12);
+}
+.opt-letter {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: 0.15s;
+}
+.opt-btn.sel .opt-letter {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* nav buttons */
+.q-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+}
+.btn-nav {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+}
+.btn-nav:hover:not(:disabled) { color: var(--text); border-color: rgba(120,140,200,0.4); }
+.btn-nav:disabled { opacity: 0.3; cursor: default; }
+.btn-nav.primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-nav.primary:hover { background: #4a6ef0; }
+.btn-nav.submit {
+  background: var(--gold);
+  color: #1a1200;
+  border-color: var(--gold);
+  font-weight: 600;
+}
+.btn-nav.submit:hover { background: #d4b06a; }
+
+/* Question map */
+.q-map-wrap {
+  margin-top: 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem;
+}
+.q-map-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+}
+.q-map {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.q-dot {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.12s;
+  display: flex; align-items: center; justify-content: center;
+}
+.q-dot:hover { border-color: rgba(91,127,255,0.5); color: var(--text); }
+.q-dot.cur { background: var(--accent); border-color: var(--accent); color: #fff; }
+.q-dot.ans { background: rgba(91,127,255,0.15); border-color: rgba(91,127,255,0.4); color: var(--accent); }
+.q-dot.skp { background: rgba(226,194,125,0.1); border-color: rgba(226,194,125,0.4); color: var(--gold); }
+
+/* ─── RESULTS SCREEN ─── */
+#results-screen { padding: 2rem 1rem; }
+.res-inner { max-width: 900px; margin: 0 auto; }
+
+.res-header {
+  text-align: center;
+  margin-bottom: 2.4rem;
+}
+.res-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.res-title {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+.res-grade {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+/* Score ring */
+.score-ring-wrap { display: flex; justify-content: center; margin-bottom: 2rem; }
+.score-ring {
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) 0%, var(--accent2) var(--pct), var(--surface2) var(--pct) 100%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(91,127,255,0.25);
+  position: relative;
+}
+.score-ring-inner {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.score-num { font-family: var(--serif); font-size: 2.4rem; line-height: 1; }
+.score-denom { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+@media(max-width:600px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+.stat-box {
+  background: var(--surface);
+  padding: 1.2rem;
+}
+.stat-box-val { font-family: var(--mono); font-size: 1.8rem; font-weight: 500; margin-bottom: 0.2rem; }
+.stat-box-key { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+
+/* Insights */
+.insights-card {
+  padding: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+.insights-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+.insights-text { font-size: 0.9rem; line-height: 1.7; }
+.weak-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  border: 1px solid rgba(242,107,107,0.35);
+  color: var(--red);
+  background: rgba(242,107,107,0.07);
+  margin: 0.2rem;
+}
+.topic-accuracy-row { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.8rem; }
+.ta-item { display: flex; align-items: center; gap: 0.8rem; font-size: 0.82rem; }
+.ta-name { width: 160px; color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
+.ta-bar-wrap { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.ta-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.ta-val { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); width: 36px; text-align: right; }
+
+/* Review filter */
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: 0.15s;
+}
+.filter-btn:hover { color: var(--text); border-color: rgba(120,140,200,0.4); }
+.filter-btn.active { background: var(--surface2); border-color: rgba(91,127,255,0.4); color: var(--text); }
+
+/* Review items */
+.rev-item {
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 0.7rem;
+  border-radius: 10px;
+  background: var(--surface2);
+  border-left: 3px solid transparent;
+  font-size: 0.88rem;
+}
+.rev-item.correct { border-left-color: var(--green); }
+.rev-item.wrong { border-left-color: var(--red); }
+.rev-item.skipped { border-left-color: var(--gold); }
+.rev-top { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.rev-qn { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.rev-topic { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); background: rgba(91,127,255,0.08); border: 1px solid rgba(91,127,255,0.2); border-radius: 5px; padding: 0.15rem 0.5rem; }
+.rev-status { font-family: var(--mono); font-size: 0.7rem; margin-left: auto; }
+.rev-status.correct { color: var(--green); }
+.rev-status.wrong { color: var(--red); }
+.rev-status.skipped { color: var(--gold); }
+.rev-qtext { color: var(--text); line-height: 1.6; margin-bottom: 0.6rem; }
+.rev-answers { display: flex; gap: 1.5rem; font-family: var(--mono); font-size: 0.78rem; flex-wrap: wrap; }
+.rev-your { color: var(--muted); }
+.rev-correct-ans { color: var(--green); }
+
+/* Action buttons */
+.res-actions { display: flex; gap: 0.7rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+.btn-action {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.btn-action.primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.btn-action.primary:hover { background: #4a6ef0; }
+.btn-action.outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-action.outline:hover { color: var(--text); border-color: rgba(120,140,200,0.4); }
+
+/* Modal */
+#submitModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+}
+.modal-title { font-family: var(--serif); font-size: 1.5rem; margin-bottom: 0.8rem; }
+.modal-sub { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+.modal-stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.modal-stat { background: var(--surface2); border-radius: 8px; padding: 0.7rem; }
+.modal-stat-val { font-family: var(--mono); font-size: 1.3rem; }
+.modal-stat-key { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.modal-btns { display: flex; gap: 0.7rem; justify-content: center; }
+
+/* Legend */
+.map-legend {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+.leg-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+}
+</style>
 </head>
 <body>
 
-<!-- START SCREEN – minimal synthwave -->
+<!-- START SCREEN -->
 <div id="start-screen" class="screen active">
-  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem;">
-    <div class="glass-panel" style="max-width: 700px; width:100%; padding:2.5rem; text-align:center;">
-      <div style="font-size:4rem;">∫📐</div>
-      <h1 style="font-size:2.2rem; background:linear-gradient(125deg, #2b9aff, #ffbc6e, #d16aff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">MATH·SYNTHESIS</h1>
-      <p style="color:var(--txt-fade); margin:1rem 0;">Differential Equations | Definite Integration | Algebra | Probability | 25 high-level problems</p>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:2rem 0;">
-        <div class="glass-panel" style="padding:0.8rem;"><div>⚡</div><div style="font-weight:800;">25</div><div>Questions</div></div>
-        <div class="glass-panel" style="padding:0.8rem;"><div>⏲️</div><div style="font-weight:800;">45 min</div><div>Timer</div></div>
-        <div class="glass-panel" style="padding:0.8rem;"><div>🎓</div><div style="font-weight:800;">Adv. + PYQ</div><div>Level</div></div>
+  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+    <div class="start-wrap">
+      <div class="start-label">Advanced Mathematics — 2026 Series</div>
+      <h1 class="start-title">Math <em>Synthesis</em></h1>
+      <p class="start-sub">25 carefully selected problems covering Calculus, Differential Equations, Algebra, Coordinate Geometry, Vectors, Probability and Complex Numbers.</p>
+
+      <div class="stat-row">
+        <div class="stat-cell">
+          <div class="stat-val">25</div>
+          <div class="stat-key">Questions</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val">45 min</div>
+          <div class="stat-key">Duration</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-val">+4 / 0</div>
+          <div class="stat-key">Marking</div>
+        </div>
       </div>
-      <button class="btn btn-primary" onclick="startQuiz()" style="width:100%; padding:1rem;">⟳ INITIALIZE SEQUENCE</button>
-      <p style="font-size:0.7rem; margin-top:1rem;">📐 Calculus · Vectors · Combinatorics · Complex Numbers</p>
+
+      <div class="topics-row">
+        <span class="topic-tag">Differential Equations</span>
+        <span class="topic-tag">Definite Integration</span>
+        <span class="topic-tag">Permutations</span>
+        <span class="topic-tag">Trigonometry</span>
+        <span class="topic-tag">Vectors</span>
+        <span class="topic-tag">Coordinate Geometry</span>
+        <span class="topic-tag">Limits</span>
+        <span class="topic-tag">Complex Numbers</span>
+        <span class="topic-tag">Probability</span>
+        <span class="topic-tag">Sequences &amp; Series</span>
+      </div>
+
+      <button class="btn-start" onclick="startQuiz()">Begin Assessment</button>
     </div>
   </div>
 </div>
 
 <!-- QUIZ SCREEN -->
 <div id="quiz-screen" class="screen">
-  <div style="max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem;">
-    <div class="glass-panel" style="display:flex; justify-content:space-between; padding:0.9rem 1.8rem; margin-bottom:1.2rem;">
-      <span style="font-weight:600;">📐 Q<span id="qCur">1</span>/<span id="qTot">25</span></span>
-      <div class="timer-pill" id="timerEl">⏱ 45:00</div>
+  <div class="quiz-inner">
+
+    <div class="quiz-topbar">
+      <div class="q-progress-label">Question <span id="qCur">1</span> of <span id="qTot">25</span></div>
+      <div class="timer-box" id="timerEl">45:00</div>
     </div>
-    <div class="glass-panel" id="questionCard" style="padding:2rem; margin-bottom:1.2rem;">
-      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1.2rem;">
-        <span class="glass-panel" style="padding:0.2rem 1rem; border-radius:30px;" id="qTopic">Topic</span>
-        <span id="qYear" style="color:var(--quantum-blue);">2024</span>
-        <span id="qStatus" style="margin-left:auto;">◉ New</span>
+
+    <div class="prog-bar-wrap">
+      <div class="prog-bar" id="progBar" style="width:4%;"></div>
+    </div>
+
+    <div class="card q-card">
+      <div class="q-meta">
+        <span class="q-num" id="qNumBadge">Q 01</span>
+        <span class="q-topic-tag" id="qTopic">Topic</span>
+        <span class="q-yr" id="qYear"></span>
+        <span class="q-status-badge" id="qStatus">Unanswered</span>
       </div>
-      <div id="qText" style="font-size:1.05rem; line-height:1.55; margin-bottom:2rem;"></div>
-      <div id="optsGrid"></div>
-      <div style="display:flex; justify-content:space-between; margin-top:2rem; flex-wrap:wrap; gap:1rem;">
-        <div><button class="btn btn-secondary" id="btnPrev" onclick="nav(-1)">◀ PREV</button><button class="btn btn-secondary" style="margin-left:0.7rem;" onclick="skipCur()">⤭ SKIP</button></div>
-        <div><button class="btn btn-primary" id="btnNext" onclick="nav(1)">NEXT ▶</button><button class="btn btn-submit" id="btnSubmit" style="display:none;" onclick="showSubmitModal()">📊 SUBMIT</button></div>
+
+      <div class="q-text" id="qText"></div>
+      <div class="opt-list" id="optsGrid"></div>
+
+      <div class="q-nav">
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn-nav" id="btnPrev" onclick="nav(-1)">Prev</button>
+          <button class="btn-nav" onclick="skipCur()">Skip</button>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn-nav primary" id="btnNext" onclick="nav(1)">Next</button>
+          <button class="btn-nav submit" id="btnSubmit" style="display:none;" onclick="showSubmitModal()">Submit</button>
+        </div>
       </div>
     </div>
-    <div id="qMap" style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; margin-top:1rem;"></div>
+
+    <div class="q-map-wrap">
+      <div class="q-map-label">Question Navigator</div>
+      <div class="q-map" id="qMap"></div>
+      <div class="map-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--accent);"></div>Current</div>
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(91,127,255,0.4);"></div>Answered</div>
+        <div class="leg-item"><div class="leg-dot" style="background:rgba(226,194,125,0.4);"></div>Skipped</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--surface2);"></div>Unanswered</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- RESULTS & ANALYSIS -->
+<!-- RESULTS SCREEN -->
 <div id="results-screen" class="screen">
-  <div style="max-width: 1100px; margin: 2rem auto; padding:1rem;">
-    <div class="glass-panel" style="padding:2rem; text-align:center;">
-      <h2 id="resTitle">📈 PERFORMANCE MATRIX</h2>
-      <div class="score-circle" style="margin:1.5rem auto;"><div><span id="scoreNum" style="font-size:2.8rem; font-weight:800;">0</span><span>/25</span></div></div>
-      <div><span id="gradeBadge" class="glass-panel" style="padding:0.3rem 1.2rem;">—</span></div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:1rem; margin:2rem 0;">
-        <div class="glass-panel" style="padding:1rem;"><div>✅ Correct</div><div id="stCorrect" style="font-size:2rem; color:#2effb0;">0</div></div>
-        <div class="glass-panel" style="padding:1rem;"><div>❌ Wrong</div><div id="stWrong" style="font-size:2rem; color:#ff5a7c;">0</div></div>
-        <div class="glass-panel" style="padding:1rem;"><div>⤭ Skipped</div><div id="stSkipped" style="font-size:2rem;">0</div></div>
-        <div class="glass-panel" style="padding:1rem;"><div>🎯 Accuracy</div><div id="stAcc">0%</div></div>
-      </div>
-      <div class="glass-panel" style="padding:1.5rem; margin-bottom:1.5rem; text-align:left;">
-        <h3 style="display:flex; gap:0.5rem;">📐 INTELLIGENT INSIGHTS (Weak area mapping)</h3>
-        <div id="insightsList"></div>
-      </div>
-      <div style="display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem;">
-        <button class="btn btn-secondary" onclick="filterReview('all')">All 25</button>
-        <button class="btn btn-secondary" onclick="filterReview('correct')">✅ Correct</button>
-        <button class="btn btn-secondary" onclick="filterReview('wrong')">❌ Wrong</button>
-        <button class="btn btn-secondary" onclick="filterReview('skipped')">⤭ Skipped</button>
-      </div>
-      <div id="reviewList"></div>
-      <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
-        <button class="btn btn-primary" onclick="restartQuiz()">⟳ RESTART</button>
-        <button class="btn btn-secondary" onclick="downloadMathReport()">📄 PDF REPORT (Stylized)</button>
+  <div class="res-inner">
+
+    <div class="res-header">
+      <div class="res-label">Assessment Complete</div>
+      <h2 class="res-title" id="resTitle">Performance Analysis</h2>
+      <div class="res-grade" id="gradeBadge"></div>
+    </div>
+
+    <div class="score-ring-wrap">
+      <div class="score-ring" id="scoreRing">
+        <div class="score-ring-inner">
+          <div class="score-num" id="scoreNum">0</div>
+          <div class="score-denom">out of 25</div>
+        </div>
       </div>
     </div>
+
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-box-val" id="stCorrect" style="color:var(--green);">0</div><div class="stat-box-key">Correct</div></div>
+      <div class="stat-box"><div class="stat-box-val" id="stWrong" style="color:var(--red);">0</div><div class="stat-box-key">Wrong</div></div>
+      <div class="stat-box"><div class="stat-box-val" id="stSkipped" style="color:var(--gold);">0</div><div class="stat-box-key">Skipped</div></div>
+      <div class="stat-box"><div class="stat-box-val" id="stAcc">0%</div><div class="stat-box-key">Accuracy</div></div>
+    </div>
+
+    <div class="card insights-card">
+      <div class="insights-title">Intelligent Analysis</div>
+      <div id="insightsText" class="insights-text"></div>
+      <div id="weakChips" style="margin-top:0.8rem;"></div>
+      <div class="topic-accuracy-row" id="topicBars"></div>
+    </div>
+
+    <div class="filter-row" id="filterRow">
+      <button class="filter-btn active" onclick="filterReview('all',this)">All</button>
+      <button class="filter-btn" onclick="filterReview('correct',this)">Correct</button>
+      <button class="filter-btn" onclick="filterReview('wrong',this)">Wrong</button>
+      <button class="filter-btn" onclick="filterReview('skipped',this)">Skipped</button>
+    </div>
+    <div id="reviewList"></div>
+
+    <div class="res-actions">
+      <button class="btn-action primary" onclick="restartQuiz()">Restart</button>
+      <button class="btn-action outline" onclick="printReport()">Print Report</button>
+    </div>
+
   </div>
 </div>
 
-<!-- MODAL -->
-<div id="submitModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); z-index:999; align-items:center; justify-content:center;">
-  <div class="glass-panel" style="max-width:400px; padding:2rem; text-align:center;">
-    <h3>📌 Finalize Analysis</h3>
-    <p id="modalSummary"></p>
-    <button class="btn btn-submit" onclick="submitQuiz()">Confirm</button>
-    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+<!-- SUBMIT MODAL -->
+<div id="submitModal">
+  <div class="modal-box">
+    <div class="modal-title">Submit Assessment?</div>
+    <p class="modal-sub">Review your progress before final submission.</p>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="modal-stat-val" id="mAns" style="color:var(--green);">0</div>
+        <div class="modal-stat-key">Answered</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-val" id="mSkip" style="color:var(--gold);">0</div>
+        <div class="modal-stat-key">Skipped</div>
+      </div>
+      <div class="modal-stat">
+        <div class="modal-stat-val" id="mUna" style="color:var(--muted);">0</div>
+        <div class="modal-stat-key">Unanswered</div>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-action primary" onclick="submitQuiz()">Confirm Submit</button>
+      <button class="btn-action outline" onclick="closeModal()">Go Back</button>
+    </div>
   </div>
 </div>
 
 <script>
-  // 25 ADVANCED MATHEMATICS QUESTIONS (Based on given reference: DE, Integration, Permutation, Limit, Vectors etc)
-  const questions = [
-    { text: "If y = f(x) solves (1+sin x)dy/dx + cos x = 0, f(0)=0, then f(π/2) = ?", opts: ["ln2", "-ln2", "ln3", "ln4"], ans: 1, topic: "Diff. Equation", yr: "2023" },
-    { text: "∫₀³ (eˣ + e⁻ˣ)/[x]! dx ([.] GIF) equals?", opts: ["(e³−e⁻³−e²+e⁻²)/2", "(e³−e²+e⁻²−e⁻³)/2", "e³−e⁻³−e²+e⁻²", "none"], ans: 0, topic: "Definite Integration", yr: "2024" },
-    { text: "Number of 7-digit numbers using digits 1,2,3,4,5 with at least one digit repeated?", opts: ["16200","15600","16800","14800"], ans: 2, topic: "Permutations", yr: "2024" },
-    { text: "Range of f(x) = sin⁻¹(1/(x²-2x+2)) is:", opts: ["(0,π/2]","(0,π/2)","[0,π/2]","[0,π/2)"], ans: 0, topic: "Inverse Trig", yr: "2023" },
-    { text: "Let S = {x∈[-π,π] : sinx(sinx+cosx)=a, a∈Z}. Number of elements in S?", opts: ["5","10","9","4"], ans: 2, topic: "Trigonometry", yr: "2024" },
-    { text: "A circle meets axes at 3 points & cuts equal intercepts. If chord length √14 on x+y=1, then R² = ?", opts: ["2","4","8","16"], ans: 2, topic: "Circle", yr: "2023" },
-    { text: "|a|=2,|b|=3, max value of 3|3a+2b|+4|3a-2b| is?", opts: ["50","60","70","80"], ans: 1, topic: "Vectors", yr: "2024" },
-    { text: "Probability that ax²+2√2bx+c>0 ∀x∈R, a,b,c∈{1,2,3,4} is m/n (coprime). m+n = ?", opts: ["81","18","78","17"], ans: 0, topic: "Probability", yr: "2024" },
-    { text: "Critical points of f(x)= sin x / x (x≠0), f(0)=1 in (-2π,2π) count?", opts: ["3","5","7","1"], ans: 0, topic: "Calculus", yr: "2023" },
-    { text: "Ellipse x²/a²+y²/b²=1 passes (3,4), e=√5/3, latus rectum length?", opts: ["4√5/3","8√5/3","4√7/3","8√7/3"], ans: 1, topic: "Ellipse", yr: "2024" },
-    { text: "Foot from origin to line through (1,1,1) with dr <2,3,4> is:", opts: ["(11/29, -2/29, 7/29)","(11/29,2/29,7/29)","(11/29,-2/29,-7/29)","(-11/29,2/29,7/29)"], ans: 0, topic: "3D Geometry", yr: "2023" },
-    { text: "α, α+2 ∈ Z are roots of Σ_{k=0}^{n-1} (x+k)(x+k+2)=4n, then α+n = ?", opts: ["0","1","2","3"], ans: 2, topic: "Quadratic", yr: "2024" },
-    { text: "K = sin(π/18) sin(5π/18) sin(7π/18), then sin(10Kπ/3) = ?", opts: ["(√3-1)/(2√2)","(√3+1)/(2√2)","(√3+1)/4","(√3-1)/4"], ans: 1, topic: "Trigonometry", yr: "2023" },
-    { text: "I = ∫₀² log₂(x²+4)dx + 2∫₂⁴√(4−|x-2|)dx = ?", opts: ["2√3","4√3","6√3","8√3"], ans: 3, topic: "Integration", yr: "2024" },
-    { text: "If Σ_{k=1}^n a_k = 6n³, then Σ_{k=1}^6 (a_{k+1} - a_k)²/36 = ?", opts: ["85","91","100","78"], ans: 1, topic: "Sequences", yr: "2024" },
-    { text: "Limit (x→2) [ eˣ sin(x³-5x²+ax+b) ] / [ (√(x-1)-1) log₂(x-1) ] = m (finite). Find a+b+m.", opts: ["4","5","6","7"], ans: 2, topic: "Limits", yr: "2023" },
-    { text: "Line through (1,1,1) ⟂ to i+2j+2k and 2i+2j+k. Foot from origin (a,b,c) then 34(a+b+c)=?", opts: ["100","108","96","112"], ans: 0, topic: "3D", yr: "2024" },
-    { text: "If 36C_{r+1} = 6·35C_{r}/(k²-3), number of ordered pairs (r,k) ∈ Z is:", opts: ["2","4","6","8"], ans: 1, topic: "Binomial", yr: "2023" },
-    { text: "Midpoints of triangle sides: (5/2,3), (5,7), (4,5). Incentre (h,k) then 3h+k = ?", opts: ["11","13","15","17"], ans: 1, topic: "Coordinate", yr: "2024" },
-    { text: "Domain of log_{0.6}((2x-5)/(x²-4)) is (−∞,a)∪{b}∪(c,d)∪(e,∞) then a+b+c+d+e = ?", opts: ["2","4","6","8"], ans: 1, topic: "Inequalities", yr: "2024" },
-    { text: "Two APs: S1: 1,6,... 101 terms ; S2: 9,16,... 71 terms. Number of common terms?", opts: ["12","14","16","18"], ans: 1, topic: "Arithmetic Progression", yr: "2023" },
-    { text: "If (2x+y)/(1+3i) + (50+31i)/(1-2i) = 17i, then 10(x+3y) = ?", opts: ["25","50","75","100"], ans: 2, topic: "Complex Numbers", yr: "2024" },
-    { text: "If the eccentricity of hyperbola x²/9 - y²/16 =1 is e₁ and ellipse x²/25+y²/9=1 is e₂, then e₁²+e₂² = ?", opts: ["2","3","4","5"], ans: 2, topic: "Conics", yr: "2023" },
-    { text: "Number of solutions of |x-1| + |x-2| = 3 in real numbers is:", opts: ["0","1","2","Infinite"], ans: 2, topic: "Functions", yr: "2024" },
-    { text: "If z is complex number satisfying |z-2i| = 2, then maximum of |z-4| is:", opts: ["2√5","6","8","10"], ans: 1, topic: "Complex Numbers", yr: "2023" }
-  ];
+const questions = [
+  {
+    text: "If y = f(x) is a solution of the differential equation (1 + sin x) dy/dx + cos x = 0 with f(0) = 0, find f(π/2).",
+    opts: ["ln 2", "−ln 2", "ln 3", "ln 4"],
+    ans: 1,
+    topic: "Differential Equation",
+    yr: "2024"
+  },
+  {
+    text: "Evaluate: ∫₀³ (eˣ + e⁻ˣ) / [x]! dx, where [.] denotes the greatest integer function.",
+    opts: ["(e³ − e⁻³ − e² + e⁻²) / 2", "(e³ − e² + e⁻² − e⁻³) / 2", "e³ − e⁻³ − e² + e⁻²", "None of these"],
+    ans: 0,
+    topic: "Definite Integration",
+    yr: "2024"
+  },
+  {
+    text: "How many 7-digit numbers can be formed using digits 1, 2, 3, 4, 5 such that at least one digit is repeated?",
+    opts: ["16200", "15600", "16800", "14800"],
+    ans: 2,
+    topic: "Permutations",
+    yr: "2024"
+  },
+  {
+    text: "Find the range of f(x) = sin⁻¹(1 / (x² − 2x + 2)).",
+    opts: ["(0, π/2]", "(0, π/2)", "[0, π/2]", "[0, π/2)"],
+    ans: 0,
+    topic: "Inverse Trigonometry",
+    yr: "2023"
+  },
+  {
+    text: "Let S = {x ∈ [−π, π] : sin x (sin x + cos x) = a} where a ∈ Z. Find the number of elements in S for which solutions exist.",
+    opts: ["5", "10", "9", "4"],
+    ans: 2,
+    topic: "Trigonometry",
+    yr: "2024"
+  },
+  {
+    text: "A circle passes through three axis points and cuts equal intercepts on both axes. If the chord length on the line x + y = 1 is √14, find R².",
+    opts: ["2", "4", "8", "16"],
+    ans: 2,
+    topic: "Circle",
+    yr: "2023"
+  },
+  {
+    text: "Given |a| = 2 and |b| = 3, find the maximum value of 3|3a + 2b| + 4|3a − 2b|.",
+    opts: ["50", "60", "70", "80"],
+    ans: 1,
+    topic: "Vectors",
+    yr: "2024"
+  },
+  {
+    text: "If a, b, c are chosen from {1, 2, 3, 4}, find the probability that ax² + 2√2 bx + c > 0 for all real x. Express as m/n in lowest terms. Find m + n.",
+    opts: ["81", "18", "78", "17"],
+    ans: 0,
+    topic: "Probability",
+    yr: "2024"
+  },
+  {
+    text: "How many critical points does f(x) = sin x / x (x ≠ 0), f(0) = 1 have in the interval (−2π, 2π)?",
+    opts: ["3", "5", "7", "1"],
+    ans: 0,
+    topic: "Calculus",
+    yr: "2023"
+  },
+  {
+    text: "An ellipse x²/a² + y²/b² = 1 passes through (3, 4) and has eccentricity e = √5/3. Find the length of its latus rectum.",
+    opts: ["4√5 / 3", "8√5 / 3", "4√7 / 3", "8√7 / 3"],
+    ans: 1,
+    topic: "Ellipse",
+    yr: "2024"
+  },
+  {
+    text: "Find the foot of perpendicular from the origin to the line passing through (1, 1, 1) with direction ratios ⟨2, 3, 4⟩.",
+    opts: ["(11/29, −2/29, 7/29)", "(11/29, 2/29, 7/29)", "(11/29, −2/29, −7/29)", "(−11/29, 2/29, 7/29)"],
+    ans: 0,
+    topic: "3D Geometry",
+    yr: "2023"
+  },
+  {
+    text: "If α and α + 2 are integer roots of Σₖ₌₀ⁿ⁻¹ (x + k)(x + k + 2) = 4n, then α + n = ?",
+    opts: ["0", "1", "2", "3"],
+    ans: 2,
+    topic: "Quadratic Equations",
+    yr: "2024"
+  },
+  {
+    text: "Let K = sin(π/18) · sin(5π/18) · sin(7π/18). Find sin(10Kπ/3).",
+    opts: ["(√3 − 1) / 2√2", "(√3 + 1) / 2√2", "(√3 + 1) / 4", "(√3 − 1) / 4"],
+    ans: 1,
+    topic: "Trigonometry",
+    yr: "2023"
+  },
+  {
+    text: "Evaluate: I = ∫₀² log₂(x² + 4) dx + 2 ∫₂⁴ √(4 − |x − 2|) dx.",
+    opts: ["2√3", "4√3", "6√3", "8√3"],
+    ans: 3,
+    topic: "Integration",
+    yr: "2024"
+  },
+  {
+    text: "If Σₖ₌₁ⁿ aₖ = 6n³ for all n, find Σₖ₌₁⁶ (aₖ₊₁ − aₖ)² / 36.",
+    opts: ["85", "91", "100", "78"],
+    ans: 1,
+    topic: "Sequences & Series",
+    yr: "2024"
+  },
+  {
+    text: "If lim(x→2) [ eˣ sin(x³ − 5x² + ax + b) ] / [ (√(x−1) − 1) · log₂(x−1) ] = m (finite nonzero), find a + b + m.",
+    opts: ["4", "5", "6", "7"],
+    ans: 2,
+    topic: "Limits",
+    yr: "2023"
+  },
+  {
+    text: "A line passes through (1, 1, 1) and is perpendicular to both i + 2j + 2k and 2i + 2j + k. If the foot of perpendicular from origin is (a, b, c), find 34(a + b + c).",
+    opts: ["100", "108", "96", "112"],
+    ans: 0,
+    topic: "3D Geometry",
+    yr: "2024"
+  },
+  {
+    text: "Find the number of ordered pairs (r, k) ∈ Z satisfying ₃₆Cᵣ₊₁ = 6 · ₃₅Cᵣ / (k² − 3).",
+    opts: ["2", "4", "6", "8"],
+    ans: 1,
+    topic: "Binomial Theorem",
+    yr: "2023"
+  },
+  {
+    text: "The midpoints of the sides of a triangle are (5/2, 3), (5, 7), (4, 5). Find the incentre (h, k) and compute 3h + k.",
+    opts: ["11", "13", "15", "17"],
+    ans: 1,
+    topic: "Coordinate Geometry",
+    yr: "2024"
+  },
+  {
+    text: "Find the domain of log₀.₆((2x − 5) / (x² − 4)). If it is (−∞, a) ∪ {b} ∪ (c, d) ∪ (e, ∞), find a + b + c + d + e.",
+    opts: ["2", "4", "6", "8"],
+    ans: 1,
+    topic: "Inequalities",
+    yr: "2024"
+  },
+  {
+    text: "AP₁: 1, 6, 11, ... (101 terms). AP₂: 9, 16, 23, ... (71 terms). Find the number of common terms.",
+    opts: ["12", "14", "16", "18"],
+    ans: 1,
+    topic: "Arithmetic Progression",
+    yr: "2023"
+  },
+  {
+    text: "If (2x + y) / (1 + 3i) + (50 + 31i) / (1 − 2i) = 17i, then find 10(x + 3y).",
+    opts: ["25", "50", "75", "100"],
+    ans: 2,
+    topic: "Complex Numbers",
+    yr: "2024"
+  },
+  {
+    text: "The eccentricity of hyperbola x²/9 − y²/16 = 1 is e₁ and that of ellipse x²/25 + y²/9 = 1 is e₂. Find e₁² + e₂².",
+    opts: ["2", "3", "4", "5"],
+    ans: 2,
+    topic: "Conics",
+    yr: "2023"
+  },
+  {
+    text: "Find the total number of real solutions of |x − 1| + |x − 2| = 3.",
+    opts: ["0", "1", "2", "Infinitely many"],
+    ans: 2,
+    topic: "Functions",
+    yr: "2024"
+  },
+  {
+    text: "If z is a complex number satisfying |z − 2i| = 2, find the maximum value of |z − 4|.",
+    opts: ["2√5", "6", "8", "10"],
+    ans: 1,
+    topic: "Complex Numbers",
+    yr: "2023"
+  }
+];
 
-  let state = { cur: 0, answers: Array(25).fill(null), skipped: Array(25).fill(false), timeLeft: 45 * 60, submitted: false, timerInt: null };
+let state = {
+  cur: 0,
+  answers: Array(25).fill(null),
+  skipped: Array(25).fill(false),
+  timeLeft: 45 * 60,
+  submitted: false,
+  timerInt: null
+};
 
-  function startQuiz() { showScreen('quiz-screen'); buildMap(); renderQ(); startTimer(); }
-  function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-  function startTimer() { if (state.timerInt) clearInterval(state.timerInt); updateTimer(); state.timerInt = setInterval(() => { if (!state.submitted) { state.timeLeft--; updateTimer(); if (state.timeLeft <= 0) { clearInterval(state.timerInt); alert('Time limit reached. Submitting...'); submitQuiz(); } } }, 1000); }
-  function updateTimer() { let m = Math.floor(state.timeLeft / 60), s = state.timeLeft % 60; document.getElementById('timerEl').innerHTML = `⏱ ${m}:${s < 10 ? '0' + s : s}`; if (state.timeLeft <= 120) document.getElementById('timerEl').style.background = '#ff5a7c40'; }
-  function renderQ() {
-    let i = state.cur, q = questions[i];
-    document.getElementById('qCur').innerText = i + 1;
-    document.getElementById('qTot').innerText = questions.length;
-    document.getElementById('qTopic').innerText = q.topic;
-    document.getElementById('qYear').innerText = q.yr;
-    document.getElementById('qText').innerHTML = q.text;
-    let status = state.skipped[i] ? "⤭ Skipped" : (state.answers[i] !== null ? "✓ Answered" : "◉ Unanswered");
-    document.getElementById('qStatus').innerHTML = status;
-    let optsDiv = document.getElementById('optsGrid');
-    optsDiv.innerHTML = '';
-    q.opts.forEach((opt, idx) => {
-      let btn = document.createElement('button');
-      btn.className = 'opt-btn' + (state.answers[i] === idx ? ' sel' : '');
-      btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65 + idx)}</span><span>${opt}</span>`;
-      btn.onclick = () => { if (!state.submitted) { state.answers[i] = idx; state.skipped[i] = false; renderQ(); saveState(); } };
-      optsDiv.appendChild(btn);
-    });
-    document.getElementById('btnPrev').disabled = (i === 0);
-    let last = (i === questions.length - 1);
-    document.getElementById('btnNext').style.display = last ? 'none' : 'block';
-    document.getElementById('btnSubmit').style.display = last ? 'block' : 'none';
-    updateMap();
+function startQuiz() {
+  showScreen('quiz-screen');
+  buildMap();
+  renderQ();
+  startTimer();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startTimer() {
+  if (state.timerInt) clearInterval(state.timerInt);
+  updateTimer();
+  state.timerInt = setInterval(() => {
+    if (!state.submitted) {
+      state.timeLeft--;
+      updateTimer();
+      if (state.timeLeft <= 0) {
+        clearInterval(state.timerInt);
+        submitQuiz();
+      }
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  const el = document.getElementById('timerEl');
+  el.textContent = `${m}:${s < 10 ? '0' + s : s}`;
+  if (state.timeLeft <= 120) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+function renderQ() {
+  const i = state.cur, q = questions[i];
+  document.getElementById('qCur').textContent = i + 1;
+  document.getElementById('qTot').textContent = questions.length;
+  document.getElementById('qNumBadge').textContent = `Q ${String(i+1).padStart(2,'0')}`;
+  document.getElementById('qTopic').textContent = q.topic;
+  document.getElementById('qYear').textContent = q.yr;
+  document.getElementById('progBar').style.width = ((i + 1) / 25 * 100) + '%';
+
+  const stEl = document.getElementById('qStatus');
+  if (state.skipped[i]) {
+    stEl.textContent = 'Skipped';
+    stEl.className = 'q-status-badge skipped';
+  } else if (state.answers[i] !== null) {
+    stEl.textContent = 'Answered';
+    stEl.className = 'q-status-badge answered';
+  } else {
+    stEl.textContent = 'Unanswered';
+    stEl.className = 'q-status-badge';
   }
-  function nav(d) { let n = state.cur + d; if (n >= 0 && n < questions.length) { state.cur = n; renderQ(); } }
-  function skipCur() { if (!state.submitted) { state.skipped[state.cur] = true; state.answers[state.cur] = null; renderQ(); if (state.cur < questions.length - 1) nav(1); saveState(); } }
-  function buildMap() { let mapDiv = document.getElementById('qMap'); mapDiv.innerHTML = ''; questions.forEach((_, i) => { let dot = document.createElement('button'); dot.className = 'q-dot'; dot.innerText = i + 1; dot.onclick = () => { state.cur = i; renderQ(); }; mapDiv.appendChild(dot); }); }
-  function updateMap() { questions.forEach((_, i) => { let dot = document.getElementById('qMap')?.children[i]; if (dot) { dot.classList.remove('cur', 'ans-dot', 'skp-dot'); if (i === state.cur) dot.classList.add('cur'); else if (state.skipped[i]) dot.classList.add('skp-dot'); else if (state.answers[i] !== null) dot.classList.add('ans-dot'); } }); }
-  function saveState() { localStorage.setItem('math_quiz_adv', JSON.stringify({ cur: state.cur, answers: state.answers, skipped: state.skipped, timeLeft: state.timeLeft, submitted: state.submitted })); }
-  function showSubmitModal() { let ans = state.answers.filter(a => a !== null).length, skip = state.skipped.filter(Boolean).length, una = 25 - ans - skip; document.getElementById('modalSummary').innerHTML = `📊 Attempted: ${ans} | Skipped: ${skip} | Unanswered: ${una}<br>Submit for final analysis.`; document.getElementById('submitModal').style.display = 'flex'; }
-  function closeModal() { document.getElementById('submitModal').style.display = 'none'; }
-  function submitQuiz() {
-    closeModal(); clearInterval(state.timerInt); state.submitted = true;
-    let correct = 0, wrong = 0, skipped = 0;
-    questions.forEach((q, i) => {
-      if (state.skipped[i] || state.answers[i] === null) skipped++;
-      else if (state.answers[i] === q.ans) correct++;
-      else wrong++;
-    });
-    let pct = Math.round(correct / 25 * 100);
-    let acc = (correct + wrong) > 0 ? Math.round(correct / (correct + wrong) * 100) : 0;
-    document.getElementById('scoreNum').innerText = correct;
-    document.getElementById('stCorrect').innerText = correct;
-    document.getElementById('stWrong').innerText = wrong;
-    document.getElementById('stSkipped').innerText = skipped;
-    document.getElementById('stAcc').innerText = acc + '%';
-    let grade = pct >= 85 ? '🏆 Math Grandmaster' : pct >= 65 ? '📐 Analyst Pro' : '📘 Focused Revision Needed';
-    document.getElementById('gradeBadge').innerText = grade;
-    let weakTopics = [...new Set(questions.filter((_, i) => state.answers[i] !== null && state.answers[i] !== questions[i].ans).map((_, i) => questions[i].topic))];
-    let insightMsg = `🎯 Score: ${pct}% | Accuracy: ${acc}%. `;
-    if (weakTopics.length) insightMsg += `⚠️ Key weak areas: ${weakTopics.slice(0, 4).join(', ')}. Focus on Calculus & Coordinate.`;
-    else insightMsg += '✨ Exceptional command on advanced topics!';
-    document.getElementById('insightsList').innerHTML = `<div style="padding:0.4rem;">${insightMsg}</div>`;
-    filterReview('all');
-    showScreen('results-screen');
-    localStorage.removeItem('math_quiz_adv');
+
+  document.getElementById('qText').innerHTML = q.text;
+
+  const optsDiv = document.getElementById('optsGrid');
+  optsDiv.innerHTML = '';
+  q.opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn' + (state.answers[i] === idx ? ' sel' : '');
+    btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65 + idx)}</span><span>${opt}</span>`;
+    btn.onclick = () => {
+      if (!state.submitted) {
+        state.answers[i] = idx;
+        state.skipped[i] = false;
+        renderQ();
+      }
+    };
+    optsDiv.appendChild(btn);
+  });
+
+  document.getElementById('btnPrev').disabled = (i === 0);
+  const last = (i === questions.length - 1);
+  document.getElementById('btnNext').style.display = last ? 'none' : 'inline-block';
+  document.getElementById('btnSubmit').style.display = last ? 'inline-block' : 'none';
+  updateMap();
+}
+
+function nav(d) {
+  const n = state.cur + d;
+  if (n >= 0 && n < questions.length) { state.cur = n; renderQ(); }
+}
+
+function skipCur() {
+  if (!state.submitted) {
+    state.skipped[state.cur] = true;
+    state.answers[state.cur] = null;
+    renderQ();
+    if (state.cur < questions.length - 1) nav(1);
   }
-  function filterReview(type) {
-    let html = '';
-    questions.forEach((q, i) => {
-      let ua = state.answers[i];
-      let isSkp = state.skipped[i] || ua === null;
-      let isCorr = !isSkp && ua === q.ans;
-      if (type === 'correct' && !isCorr) return;
-      if (type === 'wrong' && (isCorr || isSkp)) return;
-      if (type === 'skipped' && !isSkp) return;
-      let cls = isCorr ? 'correct' : isSkp ? 'skipped' : 'wrong';
-      let statusText = isCorr ? '✔ Correct' : isSkp ? '⤭ Skipped' : '✘ Wrong';
-      html += `<div class="rev-item ${cls}"><strong>Q${i+1} [${q.topic}]</strong> <span style="color:#aaa">${statusText}</span><br>${q.text}<br>📐 Your: ${isSkp ? '—' : q.opts[ua]} &nbsp; | ✅ Correct: ${q.opts[q.ans]}</div>`;
-    });
-    document.getElementById('reviewList').innerHTML = html || '<p>No entries.</p>';
+}
+
+function buildMap() {
+  const mapDiv = document.getElementById('qMap');
+  mapDiv.innerHTML = '';
+  questions.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'q-dot';
+    dot.textContent = i + 1;
+    dot.onclick = () => { state.cur = i; renderQ(); };
+    mapDiv.appendChild(dot);
+  });
+}
+
+function updateMap() {
+  questions.forEach((_, i) => {
+    const dot = document.getElementById('qMap').children[i];
+    if (!dot) return;
+    dot.classList.remove('cur', 'ans', 'skp');
+    if (i === state.cur) dot.classList.add('cur');
+    else if (state.skipped[i]) dot.classList.add('skp');
+    else if (state.answers[i] !== null) dot.classList.add('ans');
+  });
+}
+
+function showSubmitModal() {
+  const ans = state.answers.filter(a => a !== null).length;
+  const skip = state.skipped.filter(Boolean).length;
+  const una = 25 - ans - skip;
+  document.getElementById('mAns').textContent = ans;
+  document.getElementById('mSkip').textContent = skip;
+  document.getElementById('mUna').textContent = una;
+  const modal = document.getElementById('submitModal');
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('submitModal').style.display = 'none';
+}
+
+function submitQuiz() {
+  closeModal();
+  clearInterval(state.timerInt);
+  state.submitted = true;
+
+  let correct = 0, wrong = 0, skipped = 0;
+  questions.forEach((q, i) => {
+    if (state.skipped[i] || state.answers[i] === null) skipped++;
+    else if (state.answers[i] === q.ans) correct++;
+    else wrong++;
+  });
+
+  const pct = Math.round(correct / 25 * 100);
+  const acc = (correct + wrong) > 0 ? Math.round(correct / (correct + wrong) * 100) : 0;
+
+  // Score ring
+  const ring = document.getElementById('scoreRing');
+  ring.style.setProperty('--pct', pct + '%');
+
+  document.getElementById('scoreNum').textContent = correct;
+  document.getElementById('stCorrect').textContent = correct;
+  document.getElementById('stWrong').textContent = wrong;
+  document.getElementById('stSkipped').textContent = skipped;
+  document.getElementById('stAcc').textContent = acc + '%';
+
+  let grade, gradeColor;
+  if (pct >= 88) { grade = 'Mathematics Grandmaster'; gradeColor = 'var(--gold)'; }
+  else if (pct >= 70) { grade = 'Advanced Proficiency'; gradeColor = 'var(--green)'; }
+  else if (pct >= 50) { grade = 'Intermediate Level'; gradeColor = 'var(--accent)'; }
+  else { grade = 'Needs Focused Revision'; gradeColor = 'var(--red)'; }
+
+  document.getElementById('resTitle').textContent = grade;
+  document.getElementById('gradeBadge').textContent = `Score: ${pct}%  |  Accuracy: ${acc}%`;
+  document.getElementById('gradeBadge').style.color = gradeColor;
+
+  // Topic-wise analysis
+  const topicMap = {};
+  questions.forEach((q, i) => {
+    if (!topicMap[q.topic]) topicMap[q.topic] = { total: 0, correct: 0, attempted: 0 };
+    topicMap[q.topic].total++;
+    if (!state.skipped[i] && state.answers[i] !== null) {
+      topicMap[q.topic].attempted++;
+      if (state.answers[i] === q.ans) topicMap[q.topic].correct++;
+    }
+  });
+
+  const weakTopics = Object.entries(topicMap)
+    .filter(([, v]) => v.attempted > 0 && v.correct / v.attempted < 0.6)
+    .map(([k]) => k);
+
+  const allWeak = questions
+    .filter((_, i) => !state.skipped[i] && state.answers[i] !== null && state.answers[i] !== questions[i].ans)
+    .map(q => q.topic);
+  const uniqueWeak = [...new Set(allWeak)];
+
+  let insightHtml = `<strong>Overall Score: ${correct}/25 (${pct}%)</strong>. `;
+  if (uniqueWeak.length === 0 && correct > 0) {
+    insightHtml += 'Excellent command over all topics attempted. Focus on unattempted questions to maximize score.';
+  } else if (uniqueWeak.length > 0) {
+    insightHtml += `Errors detected in ${uniqueWeak.length} topic${uniqueWeak.length > 1 ? 's' : ''}. Prioritize revision on the highlighted areas below.`;
+  } else {
+    insightHtml += 'Attempt more questions to generate a detailed topic analysis.';
   }
-  function restartQuiz() { if (confirm('Restart will erase all progress.')) { clearInterval(state.timerInt); localStorage.removeItem('math_quiz_adv'); state = { cur: 0, answers: Array(25).fill(null), skipped: Array(25).fill(false), timeLeft: 45 * 60, submitted: false, timerInt: null }; showScreen('start-screen'); } }
-  function downloadMathReport() { let content = document.getElementById('results-screen').cloneNode(true); let win = window.open(); win.document.write(`<html><head><title>Math_Advanced_Report</title><style>body{font-family:sans-serif;background:#fff;color:#000;} .glass-panel{border:1px solid #ccc;padding:1rem;margin:1rem;}</style></head><body>${content.innerHTML}</body></html>`); win.document.close(); win.print(); }
-  window.startQuiz = startQuiz; window.nav = nav; window.skipCur = skipCur; window.showSubmitModal = showSubmitModal; window.closeModal = closeModal; window.submitQuiz = submitQuiz; window.filterReview = filterReview; window.restartQuiz = restartQuiz; window.downloadMathReport = downloadMathReport;
+
+  document.getElementById('insightsText').innerHTML = insightHtml;
+  document.getElementById('weakChips').innerHTML = uniqueWeak.map(t =>
+    `<span class="weak-chip">${t}</span>`
+  ).join('');
+
+  // Topic bars
+  const sortedTopics = Object.entries(topicMap)
+    .filter(([, v]) => v.attempted > 0)
+    .sort((a, b) => (b[1].correct / b[1].total) - (a[1].correct / a[1].total));
+
+  let barsHtml = '';
+  sortedTopics.forEach(([topic, data]) => {
+    const pctT = Math.round(data.correct / data.total * 100);
+    const barColor = pctT >= 70 ? 'var(--green)' : pctT >= 40 ? 'var(--accent)' : 'var(--red)';
+    barsHtml += `
+      <div class="ta-item">
+        <div class="ta-name">${topic}</div>
+        <div class="ta-bar-wrap"><div class="ta-bar" style="width:${pctT}%; background:${barColor};"></div></div>
+        <div class="ta-val">${pctT}%</div>
+      </div>`;
+  });
+  document.getElementById('topicBars').innerHTML = barsHtml;
+
+  filterReview('all', document.querySelector('#filterRow .filter-btn'));
+  showScreen('results-screen');
+}
+
+function filterReview(type, btn) {
+  // update filter buttons
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  let html = '';
+  let count = 0;
+  questions.forEach((q, i) => {
+    const ua = state.answers[i];
+    const isSkp = state.skipped[i] || ua === null;
+    const isCorr = !isSkp && ua === q.ans;
+
+    if (type === 'correct' && !isCorr) return;
+    if (type === 'wrong' && (isCorr || isSkp)) return;
+    if (type === 'skipped' && !isSkp) return;
+
+    count++;
+    const cls = isCorr ? 'correct' : isSkp ? 'skipped' : 'wrong';
+    const statusText = isCorr ? 'Correct' : isSkp ? 'Skipped' : 'Wrong';
+    const yourAns = isSkp ? 'Not attempted' : q.opts[ua];
+    const correctAns = q.opts[q.ans];
+
+    html += `
+      <div class="rev-item ${cls}">
+        <div class="rev-top">
+          <span class="rev-qn">Q${i+1}</span>
+          <span class="rev-topic">${q.topic}</span>
+          <span class="rev-status ${cls}">${statusText}</span>
+        </div>
+        <div class="rev-qtext">${q.text}</div>
+        <div class="rev-answers">
+          <span class="rev-your">Your answer: ${yourAns}</span>
+          <span class="rev-correct-ans">Correct: ${correctAns}</span>
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('reviewList').innerHTML = html || `<div style="color:var(--muted); font-size:0.88rem; padding:1rem 0;">No questions in this category.</div>`;
+}
+
+function restartQuiz() {
+  if (confirm('Restart the quiz? All progress will be reset.')) {
+    clearInterval(state.timerInt);
+    state = {
+      cur: 0,
+      answers: Array(25).fill(null),
+      skipped: Array(25).fill(false),
+      timeLeft: 45 * 60,
+      submitted: false,
+      timerInt: null
+    };
+    showScreen('start-screen');
+  }
+}
+
+function printReport() {
+  window.print();
+}
 </script>
 </body>
 </html>
