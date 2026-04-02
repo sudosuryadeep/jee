@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JEE — System Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#05050f;--bg1:#0b0b1a;--bg2:#0f0f20;--bg3:#14142a;
+  --border:#ffffff0f;--border2:#ffffff18;--border3:#ffffff28;
+  --text:#e8e6f0;--text2:#9d9bb8;--text3:#5c5a75;
+  --phys:#ff6b35;--phys2:#ff8c5a;--phys-dim:#ff6b3520;--phys-glow:#ff6b3540;
+  --chem:#a78bfa;--chem2:#c4b5fd;--chem-dim:#a78bfa20;--chem-glow:#a78bfa40;
+  --math:#22d3ee;--math2:#67e8f9;--math-dim:#22d3ee20;--math-glow:#22d3ee40;
+  --gold:#fbbf24;--red:#f87171;--green:#4ade80;
+  --font-head:'Orbitron',monospace;
+  --font-body:'Rajdhani',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ─── CANVAS BG ─── */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.4}
+
+/* ─── PAGES ─── */
+.page{position:relative;z-index:1;display:none;min-height:100vh;animation:fadeIn .4s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── LANDING ─── */
+#landing{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:2rem;
+}
+#landing.active{display:flex}
+
+.logo-area{text-align:center;margin-bottom:3.5rem}
+.logo-tag{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:4px;color:var(--text3);
+  text-transform:uppercase;margin-bottom:1rem;display:block
+}
+.logo-title{
+  font-family:var(--font-head);font-size:clamp(28px,5vw,52px);font-weight:900;
+  letter-spacing:-1px;line-height:1;color:var(--text);
+}
+.logo-title span{background:linear-gradient(135deg,#ff6b35,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:14px;color:var(--text3);margin-top:.8rem;letter-spacing:2px;text-transform:uppercase;font-weight:500}
+
+.subject-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:24px;width:100%;max-width:900px;
+}
+@media(max-width:700px){.subject-grid{grid-template-columns:1fr}}
+
+.subj-card{
+  position:relative;border-radius:16px;padding:2rem 1.75rem;cursor:pointer;
+  border:1px solid var(--border2);background:var(--bg2);
+  overflow:hidden;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+.subj-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity .3s ease;border-radius:16px;
+}
+.subj-card:hover{transform:translateY(-6px)}
+.subj-card[data-s=phys]{--ac:var(--phys);--ac2:var(--phys2);--acg:var(--phys-glow)}
+.subj-card[data-s=chem]{--ac:var(--chem);--ac2:var(--chem2);--acg:var(--chem-glow)}
+.subj-card[data-s=math]{--ac:var(--math);--ac2:var(--math2);--acg:var(--math-glow)}
+.subj-card:hover{border-color:var(--ac);box-shadow:0 0 40px var(--acg),0 20px 60px rgba(0,0,0,.5)}
+.subj-card::before{background:radial-gradient(ellipse at top left,var(--acg),transparent 60%)}
+.subj-card:hover::before{opacity:1}
+
+.sc-num{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:1.2rem}
+.sc-icon{font-size:36px;margin-bottom:1rem;display:block;line-height:1}
+.sc-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);margin-bottom:.4rem}
+.sc-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem;line-height:1.5}
+.sc-wt{font-family:var(--font-mono);font-size:28px;font-weight:400;color:var(--ac);line-height:1}
+.sc-wt-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.sc-bar{height:2px;background:var(--border);border-radius:2px;margin-top:1.2rem;overflow:hidden}
+.sc-bar-f{height:2px;border-radius:2px;background:var(--ac);transition:width 1s ease}
+.sc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:1rem}
+.sc-tag{font-size:10px;padding:3px 8px;border-radius:4px;border:1px solid var(--border2);color:var(--text3);font-family:var(--font-mono)}
+.sc-arrow{position:absolute;bottom:1.5rem;right:1.5rem;font-size:18px;color:var(--ac);opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s}
+.subj-card:hover .sc-arrow{opacity:1;transform:translateX(0)}
+
+/* ─── SUBJECT PAGE LAYOUT ─── */
+.subj-page{padding:0}
+.sp-header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(5,5,15,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sp-back{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  font-family:var(--font-mono);font-size:12px;color:var(--text3);
+  transition:color .2s;border:none;background:none;
+}
+.sp-back:hover{color:var(--text)}
+.sp-back svg{width:16px;height:16px}
+.sp-breadcrumb{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px}
+.sp-bc-root{color:var(--text3)}
+.sp-bc-sep{color:var(--text3)}
+.sp-bc-cur{color:var(--ac)}
+.sp-badge{
+  font-size:10px;padding:4px 12px;border-radius:100px;
+  border:1px solid var(--ac);color:var(--ac);
+  font-family:var(--font-mono);letter-spacing:1px
+}
+
+.sp-hero{
+  padding:3rem 2rem 2rem;border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.sp-hero::after{
+  content:'';position:absolute;top:0;right:0;width:40%;height:100%;
+  background:radial-gradient(ellipse at right center,var(--acg) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sp-hero-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:.75rem}
+.sp-hero-title{font-family:var(--font-head);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--text);line-height:1.1;margin-bottom:.5rem}
+.sp-hero-title em{color:var(--ac);font-style:normal}
+.sp-hero-sub{font-size:15px;color:var(--text2);max-width:500px;line-height:1.6}
+
+.sp-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:1.5rem 2rem;border-bottom:1px solid var(--border)}
+@media(max-width:600px){.sp-kpi{grid-template-columns:repeat(2,1fr)}}
+.kbox{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.kbox .kv{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--ac)}
+.kbox .kl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+
+.sp-content{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:calc(100vh - 60px)}
+@media(max-width:900px){.sp-content{grid-template-columns:1fr;display:block}}
+
+/* ─── SIDEBAR ─── */
+.sp-sidebar{
+  border-right:1px solid var(--border);padding:1.5rem 0;
+  position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;
+}
+.sb-section{margin-bottom:.25rem}
+.sb-label{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3);padding:.5rem 1.5rem;text-transform:uppercase}
+.sb-item{
+  display:flex;align-items:center;gap:10px;padding:.6rem 1.5rem;cursor:pointer;
+  font-size:13px;font-weight:500;color:var(--text2);
+  transition:all .2s;border-left:2px solid transparent;
+}
+.sb-item:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border3)}
+.sb-item.active{color:var(--ac);background:linear-gradient(90deg,var(--acg),transparent);border-left-color:var(--ac)}
+.sb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.7}
+.sb-pct{margin-left:auto;font-family:var(--font-mono);font-size:10px;opacity:.6}
+.sb-stars{font-size:9px;color:var(--gold)}
+
+/* ─── MAIN CONTENT AREA ─── */
+.sp-main{padding:2rem;overflow-y:auto}
+
+.section-block{display:none}
+.section-block.active{display:block;animation:fadeIn .3s ease}
+
+/* ─── OVERVIEW SECTION ─── */
+.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
+@media(max-width:700px){.ov-grid{grid-template-columns:1fr}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.panel-title{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:1rem}
+
+.branch-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem}
+.bc-mini{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:1rem;cursor:pointer;transition:all .2s;
+}
+.bc-mini:hover,.bc-mini.active{border-color:var(--ac);background:var(--bg3)}
+.bc-mini .bmn{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3)}
+.bc-mini .bmp{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--ac);margin:.2rem 0}
+.bc-mini .bml{font-size:12px;color:var(--text2)}
+.bc-mini .bmbar{height:1.5px;border-radius:2px;background:var(--border);margin-top:.75rem;overflow:hidden}
+.bc-mini .bmfill{height:1.5px;border-radius:2px;background:var(--ac)}
+
+/* ─── UNIT LIST ─── */
+.unit-table{width:100%;border-collapse:collapse}
+.unit-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+.unit-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
+.unit-table tr:last-child td{border-bottom:none}
+.unit-table tr{cursor:pointer;transition:background .15s}
+.unit-table tr:hover td{background:var(--bg3);color:var(--text)}
+.u-name{font-weight:600;color:var(--text)}
+.u-stars{color:var(--gold);font-size:10px}
+.u-bar-wrap{width:80px;height:2px;background:var(--border);border-radius:2px;display:inline-block;vertical-align:middle}
+.u-bar{height:2px;border-radius:2px}
+.pri-pill{font-size:10px;padding:2px 8px;border-radius:4px;font-family:var(--font-mono)}
+.pri-top{background:#ff6b3518;color:#ff6b35;border:1px solid #ff6b3530}
+.pri-mid{background:#fbbf2418;color:#fbbf24;border:1px solid #fbbf2430}
+.pri-low{background:#4ade8018;color:#4ade80;border:1px solid #4ade8030}
+
+/* ─── DETAIL DRAWER ─── */
+.detail-drawer{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:12px;
+  padding:1.25rem;margin:12px 0;display:none;
+  animation:slideDown .25s ease;
+}
+.detail-drawer.open{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.dd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.dd-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--ac)}
+.dd-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.dd-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem}
+.dd-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px}
+.dd-cl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono)}
+.dd-cv{font-size:14px;font-weight:600;margin-top:4px}
+.dd-note{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:1rem;padding:.75rem;background:var(--bg2);border-radius:8px;border-left:2px solid var(--ac)}
+.dd-topics-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px}
+.dd-tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);margin:3px 3px 3px 0;background:var(--bg2)}
+
+/* ─── CHARTS ─── */
+.chart-wrap{position:relative;width:100%;height:200px}
+.chart-wrap-tall{position:relative;width:100%;height:280px}
+
+/* ─── PRIORITY GRID ─── */
+.pri-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ptier{border-radius:10px;padding:1rem}
+.ptier .ptl{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:.6rem}
+.ptier .pti{font-size:12px;line-height:1.9}
+.pt-top{background:#ff6b3510;border:1px solid #ff6b3530}.pt-top .ptl{color:#ff6b35}.pt-top .pti{color:#ffa07a}
+.pt-mid{background:#fbbf2410;border:1px solid #fbbf2430}.pt-mid .ptl{color:#fbbf24}.pt-mid .pti{color:#fcd34d}
+.pt-low{background:#4ade8010;border:1px solid #4ade8030}.pt-low .ptl{color:#4ade80}.pt-low .pti{color:#86efac}
+
+/* ─── FORMULA PANEL ─── */
+.formula-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.formula-item{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:12px
+}
+.fi-name{font-size:12px;color:var(--text3)}
+.fi-eq{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--ac)}
+
+/* ─── LINKS PANEL ─── */
+.link-rows{display:flex;flex-direction:column;gap:7px}
+.link-r{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:8px 12px;display:flex;align-items:center;gap:10px
+}
+.lr-a{font-size:12px;color:var(--text2);flex:1;text-align:right}
+.lr-op{font-family:var(--font-mono);font-size:14px;color:var(--ac);text-align:center;min-width:24px}
+.lr-b{font-size:12px;color:var(--text2);flex:1}
+.lr-tag{font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--text3);white-space:nowrap}
+
+/* ─── DEPTH TABLE ─── */
+.depth-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.depth-tbl th{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);text-transform:uppercase}
+.depth-tbl td{padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text2)}
+.depth-tbl tr:last-child td{border-bottom:none}
+
+/* ─── TRUTH BOX ─── */
+.truth-box{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--phys);border-radius:12px;padding:1.25rem}
+.tb-title{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--phys);margin-bottom:.75rem;text-transform:uppercase}
+.tb-items{display:flex;flex-direction:column;gap:7px}
+.tb-item{font-size:13px;color:var(--text2);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.tb-item::before{content:"→";color:var(--phys);flex-shrink:0;font-family:var(--font-mono)}
+
+/* ─── MATH COMING SOON ─── */
+.math-coming{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;gap:1.5rem;text-align:center;padding:2rem
+}
+.math-icon{font-size:64px;opacity:.3}
+.math-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--math);opacity:.6}
+.math-sub{font-size:14px;color:var(--text3);max-width:340px;line-height:1.7}
+.math-eta{font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:8px 20px;border:1px solid var(--border2);border-radius:100px;letter-spacing:2px}
+.math-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:500px;margin-top:1rem}
+.mp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;opacity:.5}
+.mp-card .mpc-n{font-family:var(--font-head);font-size:13px;color:var(--math);margin-bottom:.3rem}
+.mp-card .mpc-p{font-family:var(--font-mono);font-size:18px;color:var(--text)}
+
+/* ─── SCROLLBARS ─── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- ═══════════════════════════════════════════ LANDING ═══════ -->
+<div id="landing" class="page active">
+  <div class="logo-area">
+    <span class="logo-tag">Joint Entrance Examination</span>
+    <div class="logo-title">JEE <span>SYSTEM</span><br>ANALYZER</div>
+    <div class="logo-sub">Select a subject to begin analysis</div>
+  </div>
+
+  <div class="subject-grid">
+    <div class="subj-card" data-s="phys" onclick="openSubject('phys')">
+      <div class="sc-num">// 01</div>
+      <span class="sc-icon">⚡</span>
+      <div class="sc-name">Physics</div>
+      <div class="sc-sub">4 interconnected systems.<br>Mechanics is the king.</div>
+      <div class="sc-wt">40–45%</div>
+      <div class="sc-wt-l">Mechanics alone</div>
+      <div class="sc-bar"><div class="sc-bar-f" style="width:90%"></div></div>
+      <div class="sc-tags">
+        <span class="sc-tag">16 units</span>
+        <span class="sc-tag">4 systems</span>
+        <span class="sc-tag">5 ★ units</span>
+      </div>
+      <span class="sc-arrow">→</span>
+    </div>
+
+    <div class="subj-card" data-s="chem" onclick="openSubject('chem')">
+      <div class="sc-num">// 02</div>
+      <span class="sc-icon">⚗️</span>
+      <div class="sc-name">Chemistry</div>
+      <div class="sc-sub">3 branches, 20 units.<br>Organic carries the weight.</div>
+      <div class="sc-wt">35–40%</div>
+      <div class="sc-wt-l">Organic chemistry</div>
+      <div class="sc-bar"><div class="sc-bar-f" style="width:95%"></div></div>
+      <div class="sc-tags">
+        <span class="sc-tag">20 units</span>
+        <span class="sc-tag">3 branches</span>
+        <span class="sc-tag">6 ★ units</span>
+      </div>
+      <span class="sc-arrow">→</span>
+    </div>
+
+    <div class="subj-card" data-s="math" onclick="openSubject('math')">
+      <div class="sc-num">// 03</div>
+      <span class="sc-icon">∑</span>
+      <div class="sc-name">Mathematics</div>
+      <div class="sc-sub">Logic + precision.<br>Calculus dominates.</div>
+      <div class="sc-wt">~33%</div>
+      <div class="sc-wt-l">Equal paper weight</div>
+      <div class="sc-bar"><div class="sc-bar-f" style="width:75%"></div></div>
+      <div class="sc-tags">
+        <span class="sc-tag">Coming soon</span>
+        <span class="sc-tag">Preview</span>
+      </div>
+      <span class="sc-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PHYSICS PAGE ═══ -->
+<div id="page-phys" class="page" style="--ac:var(--phys);--acg:var(--phys-glow)">
+  <div class="sp-header">
+    <button class="sp-back" onclick="goBack()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </button>
+    <div class="sp-breadcrumb">
+      <span class="sp-bc-root">JEE</span>
+      <span class="sp-bc-sep">/</span>
+      <span class="sp-bc-cur">Physics</span>
+    </div>
+    <span class="sp-badge">⚡ PHYS</span>
+  </div>
+
+  <div class="sp-hero">
+    <div class="sp-hero-tag">// SYSTEM ANALYSIS — PHYSICS</div>
+    <div class="sp-hero-title">4 Systems.<br><em>1 Rank.</em></div>
+    <div class="sp-hero-sub">Physics is not 20 chapters — it's 4 interconnected systems. Mechanics + Electrodynamics = 75% paper power.</div>
+  </div>
+
+  <div class="sp-kpi">
+    <div class="kbox"><div class="kv">4</div><div class="kl">Root Systems</div></div>
+    <div class="kbox"><div class="kv">5</div><div class="kl">Star Units</div></div>
+    <div class="kbox"><div class="kv">75%</div><div class="kl">Mech + Electro</div></div>
+    <div class="kbox"><div class="kv">40–45%</div><div class="kl">Mechanics Alone</div></div>
+  </div>
+
+  <div class="sp-content">
+    <div class="sp-sidebar" id="phys-sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Overview</div>
+        <div class="sb-item active" onclick="showPhysSection('overview',this)"><div class="sb-dot"></div>System Map</div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">System 01 — Mechanics</div>
+        <div class="sb-item" onclick="showPhysSection('kinematics',this)"><div class="sb-dot"></div>Kinematics<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showPhysSection('newton',this)"><div class="sb-dot"></div>Newton's Laws<span class="sb-stars"> ★</span><span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showPhysSection('wep',this)"><div class="sb-dot"></div>WEP<span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showPhysSection('rotation',this)"><div class="sb-dot"></div>Rotation<span class="sb-stars"> ★★★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showPhysSection('gravitation',this)"><div class="sb-dot"></div>Gravitation<span class="sb-pct">4%</span></div>
+        <div class="sb-item" onclick="showPhysSection('fluids',this)"><div class="sb-dot"></div>Fluid + Solids<span class="sb-pct">5.5%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">System 02 — Thermo</div>
+        <div class="sb-item" onclick="showPhysSection('thermo',this)"><div class="sb-dot"></div>Thermodynamics<span class="sb-pct">6.5%</span></div>
+        <div class="sb-item" onclick="showPhysSection('ktg',this)"><div class="sb-dot"></div>Kinetic Theory<span class="sb-pct">4%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">System 03 — Electro</div>
+        <div class="sb-item" onclick="showPhysSection('electrostatics',this)"><div class="sb-dot"></div>Electrostatics<span class="sb-stars"> ★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showPhysSection('current',this)"><div class="sb-dot"></div>Current Electricity<span class="sb-stars"> ★</span><span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showPhysSection('magnetism',this)"><div class="sb-dot"></div>Magnetism<span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showPhysSection('emi',this)"><div class="sb-dot"></div>EMI + AC<span class="sb-stars"> ★</span><span class="sb-pct">9%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">System 04 — Modern</div>
+        <div class="sb-item" onclick="showPhysSection('optics',this)"><div class="sb-dot"></div>Optics<span class="sb-stars"> ★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showPhysSection('modern',this)"><div class="sb-dot"></div>Modern Physics<span class="sb-pct">6%</span></div>
+      </div>
+    </div>
+
+    <div class="sp-main" id="phys-main">
+
+      <!-- OVERVIEW -->
+      <div id="ps-overview" class="section-block active">
+        <div class="branch-cards" id="phys-branch-cards">
+          <div class="bc-mini active" onclick="physBranchClick('mech',this)">
+            <div class="bmn">SYS 01</div><div class="bmp" style="color:var(--phys)">42%</div><div class="bml">Mechanics</div>
+            <div class="bmbar"><div class="bmfill" style="width:95%;background:var(--phys)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="physBranchClick('thermo',this)">
+            <div class="bmn">SYS 02</div><div class="bmp" style="color:var(--green)">11%</div><div class="bml">Thermo + KT</div>
+            <div class="bmbar"><div class="bmfill" style="width:25%;background:var(--green)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="physBranchClick('electro',this)">
+            <div class="bmn">SYS 03</div><div class="bmp" style="color:var(--chem)">32%</div><div class="bml">Electrodynamics</div>
+            <div class="bmbar"><div class="bmfill" style="width:73%;background:var(--chem)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="physBranchClick('modern_sys',this)">
+            <div class="bmn">SYS 04</div><div class="bmp" style="color:var(--math)">17%</div><div class="bml">Modern + Optics</div>
+            <div class="bmbar"><div class="bmfill" style="width:38%;background:var(--math)"></div></div>
+          </div>
+        </div>
+
+        <div id="phys-unit-block">
+          <div class="panel" style="margin-bottom:1rem">
+            <div class="panel-title" id="phys-unit-title">Mechanics — Units</div>
+            <table class="unit-table" id="phys-unit-table"></table>
+          </div>
+          <div id="phys-detail-drawer" class="detail-drawer"></div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Weight Distribution</div>
+            <div class="chart-wrap"><canvas id="physDonut"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Priority Tiers</div>
+            <div class="pri-grid">
+              <div class="ptier pt-top"><div class="ptl">Top</div><div class="pti">Rotation<br>Electrostatics<br>Current Elec.<br>EMI + AC<br>Optics</div></div>
+              <div class="ptier pt-mid"><div class="ptl">Mid</div><div class="pti">Newton's Laws<br>WEP<br>Thermo<br>Magnetism</div></div>
+              <div class="ptier pt-low"><div class="ptl">Low</div><div class="pti">KTG<br>Gravitation<br>Modern</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Chapter Linkages</div>
+            <div class="link-rows">
+              <div class="link-r"><div class="lr-a">Rotation</div><div class="lr-op">⊕</div><div class="lr-b">WEP</div><div class="lr-tag">Advanced</div></div>
+              <div class="link-r"><div class="lr-a">Electrostatics</div><div class="lr-op">⊕</div><div class="lr-b">Capacitor Energy</div><div class="lr-tag">Combo</div></div>
+              <div class="link-r"><div class="lr-a">EMI</div><div class="lr-op">⊕</div><div class="lr-b">AC Circuits</div><div class="lr-tag">Chain</div></div>
+              <div class="link-r"><div class="lr-a">Ray Optics</div><div class="lr-op">⊕</div><div class="lr-b">Wave Optics</div><div class="lr-tag">Mixed</div></div>
+              <div class="link-r"><div class="lr-a">Newton's Laws</div><div class="lr-op">⊕</div><div class="lr-b">Rotation</div><div class="lr-tag">Core</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Depth Rule</div>
+            <table class="depth-tbl">
+              <thead><tr><th>Type</th><th>Mode</th><th>Level</th></tr></thead>
+              <tbody>
+                <tr><td>Rotation, Electrostatics</td><td>Multi-concept chain</td><td><span class="pri-pill pri-top">High</span></td></tr>
+                <tr><td>Newton, WEP, Optics</td><td>Concept + numericals</td><td><span class="pri-pill pri-mid">Medium</span></td></tr>
+                <tr><td>Gravitation, KTG</td><td>Formula + direct</td><td><span class="pri-pill pri-low">Low</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title" id="physBarTitle">System Weightage — Bar Chart</div>
+          <div class="chart-wrap-tall"><canvas id="physBar"></canvas></div>
+        </div>
+
+        <div class="truth-box" style="margin-top:1rem">
+          <div class="tb-title">Hard Truth</div>
+          <div class="tb-items">
+            <div class="tb-item">Mechanics + Electrodynamics = 75% paper power</div>
+            <div class="tb-item">If weak in Rotation → rank drops severely</div>
+            <div class="tb-item">Solve 40–60 problems per chapter minimum</div>
+            <div class="tb-item">Only watching lectures = wasting time</div>
+            <div class="tb-item">JEE Advanced = mixed chapters, not isolated</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual unit sections (condensed) -->
+      <div id="ps-kinematics" class="section-block"></div>
+      <div id="ps-newton" class="section-block"></div>
+      <div id="ps-wep" class="section-block"></div>
+      <div id="ps-rotation" class="section-block"></div>
+      <div id="ps-gravitation" class="section-block"></div>
+      <div id="ps-fluids" class="section-block"></div>
+      <div id="ps-thermo" class="section-block"></div>
+      <div id="ps-ktg" class="section-block"></div>
+      <div id="ps-electrostatics" class="section-block"></div>
+      <div id="ps-current" class="section-block"></div>
+      <div id="ps-magnetism" class="section-block"></div>
+      <div id="ps-emi" class="section-block"></div>
+      <div id="ps-optics" class="section-block"></div>
+      <div id="ps-modern" class="section-block"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CHEMISTRY PAGE ═══ -->
+<div id="page-chem" class="page" style="--ac:var(--chem);--acg:var(--chem-glow)">
+  <div class="sp-header">
+    <button class="sp-back" onclick="goBack()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </button>
+    <div class="sp-breadcrumb">
+      <span class="sp-bc-root">JEE</span>
+      <span class="sp-bc-sep">/</span>
+      <span class="sp-bc-cur">Chemistry</span>
+    </div>
+    <span class="sp-badge">⚗️ CHEM</span>
+  </div>
+
+  <div class="sp-hero">
+    <div class="sp-hero-tag">// SYSTEM ANALYSIS — CHEMISTRY</div>
+    <div class="sp-hero-title">3 Branches.<br><em>Organic Rules.</em></div>
+    <div class="sp-hero-sub">Chemistry = 3 branches, 20 units. Organic carries 35–40%. GOC + Mechanism = rank decider.</div>
+  </div>
+
+  <div class="sp-kpi">
+    <div class="kbox"><div class="kv">20</div><div class="kl">Total Units</div></div>
+    <div class="kbox"><div class="kv">6</div><div class="kl">Star Units</div></div>
+    <div class="kbox"><div class="kv">~100%</div><div class="kl">Full Syllabus</div></div>
+    <div class="kbox"><div class="kv">35–40%</div><div class="kl">Organic Wt.</div></div>
+  </div>
+
+  <div class="sp-content">
+    <div class="sp-sidebar" id="chem-sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Overview</div>
+        <div class="sb-item active" onclick="showChemSection('overview',this)"><div class="sb-dot"></div>Branch Map</div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Physical Chemistry</div>
+        <div class="sb-item" onclick="showChemSection('mole',this)"><div class="sb-dot"></div>Mole Concept<span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showChemSection('atomic',this)"><div class="sb-dot"></div>Atomic Structure<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showChemSection('thermo_c',this)"><div class="sb-dot"></div>Thermodynamics<span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showChemSection('equilibrium',this)"><div class="sb-dot"></div>Equilibrium<span class="sb-stars"> ★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showChemSection('electrochem',this)"><div class="sb-dot"></div>Electrochemistry<span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showChemSection('kinetics',this)"><div class="sb-dot"></div>Kinetics<span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showChemSection('solutions',this)"><div class="sb-dot"></div>Solutions<span class="sb-pct">5.5%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Inorganic Chemistry</div>
+        <div class="sb-item" onclick="showChemSection('bonding',this)"><div class="sb-dot"></div>Chemical Bonding<span class="sb-stars"> ★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showChemSection('periodic',this)"><div class="sb-dot"></div>Periodic Table<span class="sb-pct">5.5%</span></div>
+        <div class="sb-item" onclick="showChemSection('pblock',this)"><div class="sb-dot"></div>p-Block<span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showChemSection('dblock',this)"><div class="sb-dot"></div>d & f Block<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showChemSection('coordination',this)"><div class="sb-dot"></div>Coordination<span class="sb-stars"> ★</span><span class="sb-pct">9%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Organic Chemistry</div>
+        <div class="sb-item" onclick="showChemSection('goc',this)"><div class="sb-dot"></div>GOC<span class="sb-stars"> ★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showChemSection('mechanism',this)"><div class="sb-dot"></div>Mechanism<span class="sb-stars"> ★★★</span><span class="sb-pct">16%</span></div>
+        <div class="sb-item" onclick="showChemSection('hydrocarbons',this)"><div class="sb-dot"></div>Hydrocarbons<span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showChemSection('functional',this)"><div class="sb-dot"></div>Functional Groups<span class="sb-stars"> ★</span><span class="sb-pct">22%</span></div>
+        <div class="sb-item" onclick="showChemSection('amines',this)"><div class="sb-dot"></div>Amines<span class="sb-pct">5.5%</span></div>
+        <div class="sb-item" onclick="showChemSection('biomolecules',this)"><div class="sb-dot"></div>Biomolecules<span class="sb-pct">3.5%</span></div>
+      </div>
+    </div>
+
+    <div class="sp-main" id="chem-main">
+
+      <!-- OVERVIEW -->
+      <div id="cs-overview" class="section-block active">
+        <div class="branch-cards" id="chem-branch-cards">
+          <div class="bc-mini active" onclick="chemBranchClick('phys_c',this)">
+            <div class="bmn">BRANCH 01</div><div class="bmp" style="color:var(--chem)">32%</div><div class="bml">Physical</div>
+            <div class="bmbar"><div class="bmfill" style="width:75%;background:var(--chem)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="chemBranchClick('inorg',this)">
+            <div class="bmn">BRANCH 02</div><div class="bmp" style="color:var(--green)">28%</div><div class="bml">Inorganic</div>
+            <div class="bmbar"><div class="bmfill" style="width:55%;background:var(--green)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="chemBranchClick('org',this)">
+            <div class="bmn">BRANCH 03</div><div class="bmp" style="color:var(--phys)">38%</div><div class="bml">Organic</div>
+            <div class="bmbar"><div class="bmfill" style="width:95%;background:var(--phys)"></div></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:1rem">
+          <div class="panel-title" id="chem-unit-title">Physical — Units</div>
+          <table class="unit-table" id="chem-unit-table"></table>
+        </div>
+        <div id="chem-detail-drawer" class="detail-drawer"></div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Branch Distribution</div>
+            <div class="chart-wrap"><canvas id="chemDonut"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Priority Tiers</div>
+            <div class="pri-grid">
+              <div class="ptier pt-top"><div class="ptl">Top</div><div class="pti">GOC<br>Mechanism<br>Equilibrium<br>Bonding<br>Coordination<br>Ald/Ket</div></div>
+              <div class="ptier pt-mid"><div class="ptl">Mid</div><div class="pti">Thermo<br>Electrochem<br>Mole Concept<br>Alcohols<br>Hydrocarbons</div></div>
+              <div class="ptier pt-low"><div class="ptl">Low</div><div class="pti">Atomic Struct.<br>Biomolecules<br>p-Block parts</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Key Formulas</div>
+            <div class="formula-list">
+              <div class="formula-item"><div class="fi-name">Moles</div><div class="fi-eq">n = w / M</div></div>
+              <div class="formula-item"><div class="fi-name">Ideal Gas</div><div class="fi-eq">PV = nRT</div></div>
+              <div class="formula-item"><div class="fi-name">Gibbs</div><div class="fi-eq">ΔG = ΔH - TΔS</div></div>
+              <div class="formula-item"><div class="fi-name">Gibbs-K</div><div class="fi-eq">ΔG = -RT ln K</div></div>
+              <div class="formula-item"><div class="fi-name">pH</div><div class="fi-eq">pH = -log[H⁺]</div></div>
+              <div class="formula-item"><div class="fi-name">Henderson</div><div class="fi-eq">pH = pKa + log(S/A)</div></div>
+              <div class="formula-item"><div class="fi-name">Nernst</div><div class="fi-eq">E = E° - (0.059/n)logQ</div></div>
+              <div class="formula-item"><div class="fi-name">Half-life</div><div class="fi-eq">t½ = 0.693 / k</div></div>
+              <div class="formula-item"><div class="fi-name">Arrhenius</div><div class="fi-eq">k = A·e^(-Ea/RT)</div></div>
+              <div class="formula-item"><div class="fi-name">Osmotic P</div><div class="fi-eq">π = iMRT</div></div>
+              <div class="formula-item"><div class="fi-name">Bond Order</div><div class="fi-eq">BO = (Nb - Na) / 2</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title" id="chemBarTitle">Unit Weightage</div>
+            <div class="chart-wrap-tall"><canvas id="chemBar"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual chem section blocks -->
+      <div id="cs-mole" class="section-block"></div>
+      <div id="cs-atomic" class="section-block"></div>
+      <div id="cs-thermo_c" class="section-block"></div>
+      <div id="cs-equilibrium" class="section-block"></div>
+      <div id="cs-electrochem" class="section-block"></div>
+      <div id="cs-kinetics" class="section-block"></div>
+      <div id="cs-solutions" class="section-block"></div>
+      <div id="cs-bonding" class="section-block"></div>
+      <div id="cs-periodic" class="section-block"></div>
+      <div id="cs-pblock" class="section-block"></div>
+      <div id="cs-dblock" class="section-block"></div>
+      <div id="cs-coordination" class="section-block"></div>
+      <div id="cs-goc" class="section-block"></div>
+      <div id="cs-mechanism" class="section-block"></div>
+      <div id="cs-hydrocarbons" class="section-block"></div>
+      <div id="cs-functional" class="section-block"></div>
+      <div id="cs-amines" class="section-block"></div>
+      <div id="cs-biomolecules" class="section-block"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ MATH PAGE ═══ -->
+<div id="page-math" class="page" style="--ac:var(--math);--acg:var(--math-glow)">
+  <div class="sp-header">
+    <button class="sp-back" onclick="goBack()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </button>
+    <div class="sp-breadcrumb">
+      <span class="sp-bc-root">JEE</span>
+      <span class="sp-bc-sep">/</span>
+      <span class="sp-bc-cur">Mathematics</span>
+    </div>
+    <span class="sp-badge">∑ MATH</span>
+  </div>
+  <div class="math-coming">
+    <div class="math-icon">∑</div>
+    <div class="math-title">Mathematics</div>
+    <div class="math-sub">Full analysis coming soon. Mathematics carries equal weight (~33%) in JEE. Calculus + Algebra + Coordinate Geometry dominate.</div>
+    <span class="math-eta">// PREVIEW MODE</span>
+    <div class="math-preview">
+      <div class="mp-card"><div class="mpc-n">Calculus</div><div class="mpc-p">~30%</div></div>
+      <div class="mp-card"><div class="mpc-n">Algebra</div><div class="mpc-p">~25%</div></div>
+      <div class="mp-card"><div class="mpc-n">Coord. Geo</div><div class="mpc-p">~20%</div></div>
+      <div class="mp-card"><div class="mpc-n">Vectors</div><div class="mpc-p">~10%</div></div>
+      <div class="mp-card"><div class="mpc-n">Probability</div><div class="mpc-p">~8%</div></div>
+      <div class="mp-card"><div class="mpc-n">Trigonometry</div><div class="mpc-p">~7%</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ─── BG CANVAS ANIMATION ───
+const canvas = document.getElementById('bgCanvas');
+const ctx2 = canvas.getContext('2d');
+let W, H, particles = [], lines = [];
+
+function resizeCvs(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;initP()}
+function initP(){
+  particles=[];
+  for(let i=0;i<60;i++) particles.push({
+    x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,
+    r:Math.random()*1.5+.5,
+    color:['#ff6b35','#a78bfa','#22d3ee','#fbbf24'][Math.floor(Math.random()*4)]
+  });
+}
+
+function drawBg(){
+  ctx2.clearRect(0,0,W,H);
+  // grid
+  ctx2.strokeStyle='rgba(255,255,255,0.025)';
+  ctx2.lineWidth=.5;
+  const gsize=60;
+  for(let x=0;x<W;x+=gsize){ctx2.beginPath();ctx2.moveTo(x,0);ctx2.lineTo(x,H);ctx2.stroke()}
+  for(let y=0;y<H;y+=gsize){ctx2.beginPath();ctx2.moveTo(0,y);ctx2.lineTo(W,y);ctx2.stroke()}
+  // particles
+  particles.forEach((p,i)=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>W)p.vx*=-1;
+    if(p.y<0||p.y>H)p.vy*=-1;
+    ctx2.beginPath();ctx2.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx2.fillStyle=p.color+'80';ctx2.fill();
+    // connections
+    particles.slice(i+1).forEach(q=>{
+      const d=Math.hypot(p.x-q.x,p.y-q.y);
+      if(d<120){
+        ctx2.beginPath();ctx2.moveTo(p.x,p.y);ctx2.lineTo(q.x,q.y);
+        ctx2.strokeStyle=`rgba(255,255,255,${.04*(1-d/120)})`;ctx2.lineWidth=.5;ctx2.stroke();
+      }
+    });
+  });
+  requestAnimationFrame(drawBg);
+}
+window.addEventListener('resize',resizeCvs);
+resizeCvs();drawBg();
+
+// ─── NAVIGATION ───
+function openSubject(s){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+s).classList.add('active');
+  window.scrollTo(0,0);
+  if(s==='phys' && !physChartsBuilt) buildPhysCharts();
+  if(s==='chem' && !chemChartsBuilt) buildChemCharts();
+}
+function goBack(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('landing').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── PHYSICS DATA ───
+const PHYS_DATA={
+  mech:{label:'Mechanics',color:'#ff6b35',units:[
+    {id:'kinematics',name:'Kinematics',pct:6,stars:0,priority:'mid',depth:'med',subtopics:['1D Motion','2D Motion','Projectile','Relative Velocity','v-t / x-t Graphs'],note:'Foundation only — Graph traps in Advanced'},
+    {id:'newton',name:"Newton's Laws",pct:9,stars:1,priority:'mid',depth:'high',subtopics:['FBD','Friction','Inclined Plane','Pulley + Constraint','Circular Motion'],note:'FBD mastery = non-negotiable'},
+    {id:'wep',name:'Work Energy Power',pct:7,stars:0,priority:'mid',depth:'med',subtopics:['Work-Energy Theorem','Potential Energy','Conservation','Elastic Collisions'],note:'Mixes with Rotation in Advanced'},
+    {id:'rotation',name:'Rotation',pct:11,stars:3,priority:'top',depth:'high',subtopics:['Torque','Angular Momentum','Moment of Inertia','Parallel Axis','Rolling Motion'],note:'Most fail here — Highest depth required'},
+    {id:'gravitation',name:'Gravitation',pct:4,stars:0,priority:'low',depth:'low',subtopics:["Newton's Law",'Gravitational Potential','Satellite Motion'],note:'Easy but scoring'},
+    {id:'fluids',name:'Fluid + Solids',pct:5.5,stars:0,priority:'mid',depth:'med',subtopics:['Elasticity','Fluid Pressure',"Bernoulli's Theorem",'Viscosity'],note:'Medium depth, consistent presence'},
+  ]},
+  thermo:{label:'Thermo + KT',color:'#4ade80',units:[
+    {id:'thermo',name:'Thermodynamics',pct:6.5,stars:0,priority:'mid',depth:'med',subtopics:['First Law','Heat & Work','Carnot Cycle','PV Diagrams','Entropy'],note:'Graph-based questions are key'},
+    {id:'ktg',name:'Kinetic Theory',pct:4,stars:0,priority:'low',depth:'low',subtopics:['RMS Speed','Degrees of Freedom','Equipartition Theorem'],note:'Mostly direct formula questions'},
+  ]},
+  electro:{label:'Electrodynamics',color:'#a78bfa',units:[
+    {id:'electrostatics',name:'Electrostatics',pct:11,stars:1,priority:'top',depth:'high',subtopics:["Coulomb's Law",'Electric Field','Gauss Law','Potential','Capacitors'],note:'Field + potential relation is key'},
+    {id:'current',name:'Current Electricity',pct:7,stars:1,priority:'top',depth:'med',subtopics:["Ohm's Law",'Kirchhoff (KVL/KCL)','Wheatstone Bridge','Power & Heating'],note:'Circuit solving speed matters'},
+    {id:'magnetism',name:'Magnetism',pct:7,stars:0,priority:'mid',depth:'med',subtopics:['Biot-Savart',"Ampere's Law",'Force on Charge','Magnetic Dipole'],note:'Concept-heavy, consistent weightage'},
+    {id:'emi',name:'EMI + AC',pct:9,stars:1,priority:'top',depth:'high',subtopics:["Faraday's Law",'Lenz Law','LCR Circuit','Resonance','Phase Angle'],note:'Graph + phase = Advanced favourite'},
+  ]},
+  modern_sys:{label:'Modern + Optics',color:'#22d3ee',units:[
+    {id:'optics',name:'Optics (Ray + Wave)',pct:11,stars:1,priority:'top',depth:'med',subtopics:['Mirror Formula','Lens Formula','Lens Combos','YDSE','Diffraction'],note:'Lens combo + YDSE = most important PYQs'},
+    {id:'modern',name:'Modern Physics',pct:6,stars:0,priority:'low',depth:'low',subtopics:['Photoelectric Effect','Bohr Model','Nuclear Physics','Semiconductors'],note:"Easy marks — don't skip"},
+  ]}
+};
+
+let curPhysBranch='mech', physChartsBuilt=false;
+let physDonutChart, physBarChart2;
+
+function physBranchClick(key,el){
+  curPhysBranch=key;
+  document.querySelectorAll('#phys-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderPhysUnits();
+  if(physBarChart2){physBarChart2.destroy();physBarChart2=null;}
+  buildPhysBar();
+}
+
+function renderPhysUnits(){
+  const br=PHYS_DATA[curPhysBranch];
+  document.getElementById('phys-unit-title').textContent=br.label+' — Units';
+  const tbl=document.getElementById('phys-unit-table');
+  const max=Math.max(...br.units.map(u=>u.pct));
+  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>
+  ${br.units.map(u=>`
+    <tr onclick="showPhysUnitDetail('${u.id}')">
+      <td class="u-name">${u.name}</td>
+      <td class="u-stars">${'★'.repeat(u.stars)||'—'}</td>
+      <td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td>
+      <td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td>
+      <td><span class="pri-pill pri-${u.priority==='top'?'top':u.priority==='mid'?'mid':'low'}">${u.priority.toUpperCase()}</span></td>
+    </tr>
+  `).join('')}
+  </tbody>`;
+}
+
+function showPhysUnitDetail(id){
+  const allU=Object.values(PHYS_DATA).flatMap(b=>b.units);
+  const u=allU.find(x=>x.id===id);
+  const br=Object.values(PHYS_DATA).find(b=>b.units.find(x=>x.id===id));
+  const dr=document.getElementById('phys-detail-drawer');
+  if(dr.dataset.open===id){dr.classList.remove('open');dr.dataset.open='';return;}
+  dr.dataset.open=id;
+  const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
+  dr.innerHTML=`
+    <div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('phys-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div>
+    <div class="dd-meta">
+      <div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div>
+      <div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div>
+      <div class="dd-card"><div class="dd-cl">Depth</div><div class="dd-cv">${u.depth==='high'?'High':u.depth==='med'?'Medium':'Low'}</div></div>
+      <div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
+    </div>
+    <div class="dd-note">${u.note}</div>
+    <div class="dd-topics-l">Subtopics</div>
+    ${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}
+  `;
+  dr.classList.add('open');
+}
+
+function buildPhysCharts(){
+  physChartsBuilt=true;
+  // Donut
+  physDonutChart=new Chart(document.getElementById('physDonut').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['Mechanics 42%','Thermo 11%','Electrodynamics 32%','Modern+Optics 17%'],
+    datasets:[{data:[42,11,32,17],backgroundColor:['#ff6b35','#4ade80','#a78bfa','#22d3ee'],borderColor:'#05050f',borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  buildPhysBar();
+  renderPhysUnits();
+}
+
+function buildPhysBar(){
+  const br=PHYS_DATA[curPhysBranch];
+  if(physBarChart2)physBarChart2.destroy();
+  physBarChart2=new Chart(document.getElementById('physBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:br.units.map(u=>u.name),
+    datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},
+              y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}
+  });
+}
+
+function showPhysSection(id,el){
+  document.querySelectorAll('#phys-sidebar .sb-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#phys-main .section-block').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById('ps-'+id);
+  if(!sec.innerHTML.trim()||id==='overview'){
+    document.getElementById('ps-overview').classList.add('active');
+    if(id!=='overview'){
+      const allU=Object.values(PHYS_DATA).flatMap(b=>b.units);
+      const u=allU.find(x=>x.id===id);
+      if(u) showPhysUnitDetail(id);
+    }
+  } else { sec.classList.add('active'); }
+}
+
+// ─── CHEMISTRY DATA ───
+const CHEM_DATA={
+  phys_c:{label:'Physical Chemistry',color:'#a78bfa',units:[
+    {id:'mole',name:'Mole Concept',pct:9,stars:0,priority:'mid',subtopics:['Stoichiometry','Limiting Reagent','Empirical Formula'],note:'Multi-step reactions + gas+solid+solution combos'},
+    {id:'atomic',name:'Atomic Structure',pct:6,stars:0,priority:'low',subtopics:['Bohr Model','Quantum Numbers','Orbitals'],note:"Low ROI — don't overstudy"},
+    {id:'thermo_c',name:'Thermodynamics',pct:9,stars:0,priority:'mid',subtopics:['First Law','Enthalpy','Hess Law','Gibbs Energy'],note:'Graph-based reasoning + linking with equilibrium'},
+    {id:'equilibrium',name:'Equilibrium',pct:11,stars:1,priority:'top',subtopics:['Chemical Eq.','Ionic Eq.','pH','Buffer'],note:'THIS is rank booster — approximation methods'},
+    {id:'electrochem',name:'Electrochemistry',pct:9,stars:0,priority:'mid',subtopics:['Galvanic Cells','Nernst Equation','Conductivity'],note:'Cell combinations + graph + concept'},
+    {id:'kinetics',name:'Kinetics',pct:7,stars:0,priority:'mid',subtopics:['Rate Law','Order of Reaction','Arrhenius'],note:''},
+    {id:'solutions',name:'Solutions',pct:5.5,stars:0,priority:'mid',subtopics:['Colligative Properties','van\'t Hoff'],note:''},
+  ]},
+  inorg:{label:'Inorganic Chemistry',color:'#4ade80',units:[
+    {id:'bonding',name:'Chemical Bonding',pct:11,stars:1,priority:'top',subtopics:['Ionic Bond','Covalent Bond','VSEPR','Hybridization','MOT'],note:'Backbone of Chemistry — MOT comparison + exceptions'},
+    {id:'periodic',name:'Periodic Table',pct:5.5,stars:0,priority:'low',subtopics:['Periodic Trends','Exceptions'],note:'Needs logic + revision'},
+    {id:'pblock',name:'p-Block',pct:11,stars:0,priority:'low',subtopics:['Group 13–18','Group Properties'],note:'NCERT line-by-line — questions are direct'},
+    {id:'dblock',name:'d & f Block',pct:6,stars:0,priority:'mid',subtopics:['Oxidation States','Color','Magnetic Properties'],note:''},
+    {id:'coordination',name:'Coordination',pct:9,stars:1,priority:'top',subtopics:['Ligands','CFT','Isomerism','Naming'],note:'High scoring — CFSE + isomerism'},
+  ]},
+  org:{label:'Organic Chemistry',color:'#ff6b35',units:[
+    {id:'goc',name:'GOC',pct:11,stars:1,priority:'top',subtopics:['Inductive Effect','Resonance','Stability','Hyperconjugation'],note:'Foundation. No compromise. Builds everything else.'},
+    {id:'mechanism',name:'Reaction Mechanism',pct:16,stars:3,priority:'top',subtopics:['SN1','SN2','E1','E2','Electrophilic Sub.','Nucleophilic Add.'],note:'MOST IMPORTANT — Advanced loves multi-step mechanism'},
+    {id:'hydrocarbons',name:'Hydrocarbons',pct:9,stars:0,priority:'mid',subtopics:['Alkanes','Alkenes','Alkynes','Arenes'],note:''},
+    {id:'functional',name:'Functional Groups',pct:22,stars:1,priority:'top',subtopics:['Haloalkanes','Alcohols','Aldehydes','Ketones','Carboxylic Acids'],note:'Highest weight — Aldehyde/Ketone is critical'},
+    {id:'amines',name:'Amines',pct:5.5,stars:0,priority:'mid',subtopics:['Classification','Reactions','Diazonium'],note:'Basicity: aliphatic > aromatic'},
+    {id:'biomolecules',name:'Biomolecules',pct:3.5,stars:0,priority:'low',subtopics:['Carbohydrates','Proteins','Nucleic Acids'],note:'Easy marks — quick read NCERT'},
+  ]}
+};
+
+let curChemBranch='phys_c', chemChartsBuilt=false;
+let chemDonutChart, chemBarChart;
+
+function chemBranchClick(key,el){
+  curChemBranch=key;
+  document.querySelectorAll('#chem-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderChemUnits();
+  if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}
+  buildChemBar();
+}
+
+function renderChemUnits(){
+  const br=CHEM_DATA[curChemBranch];
+  document.getElementById('chem-unit-title').textContent=br.label+' — Units';
+  const tbl=document.getElementById('chem-unit-table');
+  const max=Math.max(...br.units.map(u=>u.pct));
+  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>
+  ${br.units.map(u=>`
+    <tr onclick="showChemUnitDetail('${u.id}')">
+      <td class="u-name">${u.name}</td>
+      <td class="u-stars">${'★'.repeat(u.stars)||'—'}</td>
+      <td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td>
+      <td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td>
+      <td><span class="pri-pill pri-${u.priority==='top'?'top':u.priority==='mid'?'mid':'low'}">${u.priority.toUpperCase()}</span></td>
+    </tr>
+  `).join('')}
+  </tbody>`;
+}
+
+function showChemUnitDetail(id){
+  const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);
+  const u=allU.find(x=>x.id===id);
+  const br=Object.values(CHEM_DATA).find(b=>b.units.find(x=>x.id===id));
+  const dr=document.getElementById('chem-detail-drawer');
+  if(dr.dataset.open===id){dr.classList.remove('open');dr.dataset.open='';return;}
+  dr.dataset.open=id;
+  const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
+  dr.innerHTML=`
+    <div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('chem-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div>
+    <div class="dd-meta">
+      <div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div>
+      <div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div>
+      <div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
+    </div>
+    ${u.note?`<div class="dd-note">${u.note}</div>`:''}
+    <div class="dd-topics-l">Subtopics</div>
+    ${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}
+  `;
+  dr.classList.add('open');
+}
+
+function buildChemCharts(){
+  chemChartsBuilt=true;
+  chemDonutChart=new Chart(document.getElementById('chemDonut').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['Physical 32%','Inorganic 28%','Organic 38%'],
+    datasets:[{data:[32,28,38],backgroundColor:['#a78bfa','#4ade80','#ff6b35'],borderColor:'#05050f',borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  buildChemBar();
+  renderChemUnits();
+}
+
+function buildChemBar(){
+  const br=CHEM_DATA[curChemBranch];
+  if(chemBarChart)chemBarChart.destroy();
+  chemBarChart=new Chart(document.getElementById('chemBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:br.units.map(u=>u.name),
+    datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},
+              y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}
+  });
+}
+
+function showChemSection(id,el){
+  document.querySelectorAll('#chem-sidebar .sb-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#chem-main .section-block').forEach(s=>s.classList.remove('active'));
+  document.getElementById('cs-overview').classList.add('active');
+  if(id!=='overview'){
+    const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);
+    const u=allU.find(x=>x.id===id);
+    if(u){
+      const brKey=Object.keys(CHEM_DATA).find(k=>CHEM_DATA[k].units.find(x=>x.id===id));
+      if(brKey!==curChemBranch){
+        curChemBranch=brKey;
+        document.querySelectorAll('#chem-branch-cards .bc-mini').forEach((c,i)=>{
+          c.classList.remove('active');
+          if(Object.keys(CHEM_DATA)[i]===brKey)c.classList.add('active');
+        });
+        renderChemUnits();
+        if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}
+        buildChemBar();
+      }
+      setTimeout(()=>showChemUnitDetail(id),100);
+    }
+  }
+}
+</script>
+</body>
+</html>
