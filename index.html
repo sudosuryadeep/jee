@@ -20,53 +20,28 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:var(--font-body);background:var(--bg);color:var(--text);
-  min-height:100vh;overflow-x:hidden;
-}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-/* ─── CANVAS BG ─── */
 #bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.4}
 
-/* ─── PAGES ─── */
 .page{position:relative;z-index:1;display:none;min-height:100vh;animation:fadeIn .4s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* ─── LANDING ─── */
-#landing{
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;padding:2rem;
-}
+#landing{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
 #landing.active{display:flex}
 
 .logo-area{text-align:center;margin-bottom:3.5rem}
-.logo-tag{
-  font-family:var(--font-mono);font-size:11px;letter-spacing:4px;color:var(--text3);
-  text-transform:uppercase;margin-bottom:1rem;display:block
-}
-.logo-title{
-  font-family:var(--font-head);font-size:clamp(28px,5vw,52px);font-weight:900;
-  letter-spacing:-1px;line-height:1;color:var(--text);
-}
+.logo-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:1rem;display:block}
+.logo-title{font-family:var(--font-head);font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:-1px;line-height:1;color:var(--text)}
 .logo-title span{background:linear-gradient(135deg,#ff6b35,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-sub{font-size:14px;color:var(--text3);margin-top:.8rem;letter-spacing:2px;text-transform:uppercase;font-weight:500}
 
-.subject-grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:24px;width:100%;max-width:900px;
-}
+.subject-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;width:100%;max-width:900px}
 @media(max-width:700px){.subject-grid{grid-template-columns:1fr}}
 
-.subj-card{
-  position:relative;border-radius:16px;padding:2rem 1.75rem;cursor:pointer;
-  border:1px solid var(--border2);background:var(--bg2);
-  overflow:hidden;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
-}
-.subj-card::before{
-  content:'';position:absolute;inset:0;opacity:0;
-  transition:opacity .3s ease;border-radius:16px;
-}
+.subj-card{position:relative;border-radius:16px;padding:2rem 1.75rem;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);overflow:hidden;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+.subj-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s ease;border-radius:16px}
 .subj-card:hover{transform:translateY(-6px)}
 .subj-card[data-s=phys]{--ac:var(--phys);--ac2:var(--phys2);--acg:var(--phys-glow)}
 .subj-card[data-s=chem]{--ac:var(--chem);--ac2:var(--chem2);--acg:var(--chem-glow)}
@@ -88,41 +63,19 @@ body{
 .sc-arrow{position:absolute;bottom:1.5rem;right:1.5rem;font-size:18px;color:var(--ac);opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s}
 .subj-card:hover .sc-arrow{opacity:1;transform:translateX(0)}
 
-/* ─── SUBJECT PAGE LAYOUT ─── */
 .subj-page{padding:0}
-.sp-header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(5,5,15,.85);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:0 2rem;height:60px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.sp-back{
-  display:flex;align-items:center;gap:8px;cursor:pointer;
-  font-family:var(--font-mono);font-size:12px;color:var(--text3);
-  transition:color .2s;border:none;background:none;
-}
+.sp-header{position:sticky;top:0;z-index:100;background:rgba(5,5,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
+.sp-back{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--font-mono);font-size:12px;color:var(--text3);transition:color .2s;border:none;background:none}
 .sp-back:hover{color:var(--text)}
 .sp-back svg{width:16px;height:16px}
 .sp-breadcrumb{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px}
 .sp-bc-root{color:var(--text3)}
 .sp-bc-sep{color:var(--text3)}
 .sp-bc-cur{color:var(--ac)}
-.sp-badge{
-  font-size:10px;padding:4px 12px;border-radius:100px;
-  border:1px solid var(--ac);color:var(--ac);
-  font-family:var(--font-mono);letter-spacing:1px
-}
+.sp-badge{font-size:10px;padding:4px 12px;border-radius:100px;border:1px solid var(--ac);color:var(--ac);font-family:var(--font-mono);letter-spacing:1px}
 
-.sp-hero{
-  padding:3rem 2rem 2rem;border-bottom:1px solid var(--border);
-  position:relative;overflow:hidden;
-}
-.sp-hero::after{
-  content:'';position:absolute;top:0;right:0;width:40%;height:100%;
-  background:radial-gradient(ellipse at right center,var(--acg) 0%,transparent 70%);
-  pointer-events:none;
-}
+.sp-hero{padding:3rem 2rem 2rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.sp-hero::after{content:'';position:absolute;top:0;right:0;width:40%;height:100%;background:radial-gradient(ellipse at right center,var(--acg) 0%,transparent 70%);pointer-events:none}
 .sp-hero-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:3px;color:var(--text3);margin-bottom:.75rem}
 .sp-hero-title{font-family:var(--font-head);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--text);line-height:1.1;margin-bottom:.5rem}
 .sp-hero-title em{color:var(--ac);font-style:normal}
@@ -137,41 +90,27 @@ body{
 .sp-content{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:calc(100vh - 60px)}
 @media(max-width:900px){.sp-content{grid-template-columns:1fr;display:block}}
 
-/* ─── SIDEBAR ─── */
-.sp-sidebar{
-  border-right:1px solid var(--border);padding:1.5rem 0;
-  position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;
-}
+.sp-sidebar{border-right:1px solid var(--border);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
 .sb-section{margin-bottom:.25rem}
 .sb-label{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3);padding:.5rem 1.5rem;text-transform:uppercase}
-.sb-item{
-  display:flex;align-items:center;gap:10px;padding:.6rem 1.5rem;cursor:pointer;
-  font-size:13px;font-weight:500;color:var(--text2);
-  transition:all .2s;border-left:2px solid transparent;
-}
+.sb-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.5rem;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .2s;border-left:2px solid transparent}
 .sb-item:hover{color:var(--text);background:var(--bg3);border-left-color:var(--border3)}
 .sb-item.active{color:var(--ac);background:linear-gradient(90deg,var(--acg),transparent);border-left-color:var(--ac)}
 .sb-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.7}
 .sb-pct{margin-left:auto;font-family:var(--font-mono);font-size:10px;opacity:.6}
 .sb-stars{font-size:9px;color:var(--gold)}
 
-/* ─── MAIN CONTENT AREA ─── */
 .sp-main{padding:2rem;overflow-y:auto}
-
 .section-block{display:none}
 .section-block.active{display:block;animation:fadeIn .3s ease}
 
-/* ─── OVERVIEW SECTION ─── */
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
 @media(max-width:700px){.ov-grid{grid-template-columns:1fr}}
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
 .panel-title{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:1rem}
 
-.branch-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem}
-.bc-mini{
-  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
-  padding:1rem;cursor:pointer;transition:all .2s;
-}
+.branch-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.bc-mini{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s}
 .bc-mini:hover,.bc-mini.active{border-color:var(--ac);background:var(--bg3)}
 .bc-mini .bmn{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3)}
 .bc-mini .bmp{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--ac);margin:.2rem 0}
@@ -179,7 +118,6 @@ body{
 .bc-mini .bmbar{height:1.5px;border-radius:2px;background:var(--border);margin-top:.75rem;overflow:hidden}
 .bc-mini .bmfill{height:1.5px;border-radius:2px;background:var(--ac)}
 
-/* ─── UNIT LIST ─── */
 .unit-table{width:100%;border-collapse:collapse}
 .unit-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--text3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
 .unit-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
@@ -195,12 +133,7 @@ body{
 .pri-mid{background:#fbbf2418;color:#fbbf24;border:1px solid #fbbf2430}
 .pri-low{background:#4ade8018;color:#4ade80;border:1px solid #4ade8030}
 
-/* ─── DETAIL DRAWER ─── */
-.detail-drawer{
-  background:var(--bg3);border:1px solid var(--border2);border-radius:12px;
-  padding:1.25rem;margin:12px 0;display:none;
-  animation:slideDown .25s ease;
-}
+.detail-drawer{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:1.25rem;margin:12px 0;display:none;animation:slideDown .25s ease}
 .detail-drawer.open{display:block}
 @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .dd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
@@ -213,12 +146,12 @@ body{
 .dd-note{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:1rem;padding:.75rem;background:var(--bg2);border-radius:8px;border-left:2px solid var(--ac)}
 .dd-topics-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px}
 .dd-tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:100px;border:1px solid var(--border2);color:var(--text2);margin:3px 3px 3px 0;background:var(--bg2)}
+.dd-formula-l{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin:10px 0 6px}
+.dd-ftag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:100px;border:1px solid var(--border3);color:var(--math2);margin:3px 3px 3px 0;background:var(--bg2);font-family:var(--font-mono)}
 
-/* ─── CHARTS ─── */
 .chart-wrap{position:relative;width:100%;height:200px}
 .chart-wrap-tall{position:relative;width:100%;height:280px}
 
-/* ─── PRIORITY GRID ─── */
 .pri-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .ptier{border-radius:10px;padding:1rem}
 .ptier .ptl{font-family:var(--font-mono);font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:.6rem}
@@ -227,54 +160,33 @@ body{
 .pt-mid{background:#fbbf2410;border:1px solid #fbbf2430}.pt-mid .ptl{color:#fbbf24}.pt-mid .pti{color:#fcd34d}
 .pt-low{background:#4ade8010;border:1px solid #4ade8030}.pt-low .ptl{color:#4ade80}.pt-low .pti{color:#86efac}
 
-/* ─── FORMULA PANEL ─── */
 .formula-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
-.formula-item{
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
-  padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:12px
-}
+.formula-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .fi-name{font-size:12px;color:var(--text3)}
 .fi-eq{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--ac)}
 
-/* ─── LINKS PANEL ─── */
 .link-rows{display:flex;flex-direction:column;gap:7px}
-.link-r{
-  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
-  padding:8px 12px;display:flex;align-items:center;gap:10px
-}
+.link-r{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px}
 .lr-a{font-size:12px;color:var(--text2);flex:1;text-align:right}
 .lr-op{font-family:var(--font-mono);font-size:14px;color:var(--ac);text-align:center;min-width:24px}
 .lr-b{font-size:12px;color:var(--text2);flex:1}
 .lr-tag{font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid var(--border2);color:var(--text3);white-space:nowrap}
 
-/* ─── DEPTH TABLE ─── */
 .depth-tbl{width:100%;border-collapse:collapse;font-size:13px}
 .depth-tbl th{font-family:var(--font-mono);font-size:9px;letter-spacing:1.5px;color:var(--text3);text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);text-transform:uppercase}
 .depth-tbl td{padding:8px 8px;border-bottom:1px solid var(--border);color:var(--text2)}
 .depth-tbl tr:last-child td{border-bottom:none}
 
-/* ─── TRUTH BOX ─── */
 .truth-box{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--phys);border-radius:12px;padding:1.25rem}
 .tb-title{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--phys);margin-bottom:.75rem;text-transform:uppercase}
 .tb-items{display:flex;flex-direction:column;gap:7px}
 .tb-item{font-size:13px;color:var(--text2);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
 .tb-item::before{content:"→";color:var(--phys);flex-shrink:0;font-family:var(--font-mono)}
 
-/* ─── MATH COMING SOON ─── */
-.math-coming{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:60vh;gap:1.5rem;text-align:center;padding:2rem
-}
-.math-icon{font-size:64px;opacity:.3}
-.math-title{font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--math);opacity:.6}
-.math-sub{font-size:14px;color:var(--text3);max-width:340px;line-height:1.7}
-.math-eta{font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:8px 20px;border:1px solid var(--border2);border-radius:100px;letter-spacing:2px}
-.math-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:500px;margin-top:1rem}
-.mp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;opacity:.5}
-.mp-card .mpc-n{font-family:var(--font-head);font-size:13px;color:var(--math);margin-bottom:.3rem}
-.mp-card .mpc-p{font-family:var(--font-mono);font-size:18px;color:var(--text)}
+.truth-box.math-tb{border-left-color:var(--math)}
+.truth-box.math-tb .tb-title{color:var(--math)}
+.truth-box.math-tb .tb-item::before{color:var(--math)}
 
-/* ─── SCROLLBARS ─── */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border3);border-radius:2px}
@@ -284,14 +196,13 @@ body{
 
 <canvas id="bgCanvas"></canvas>
 
-<!-- ═══════════════════════════════════════════ LANDING ═══════ -->
+<!-- ═══ LANDING ═══ -->
 <div id="landing" class="page active">
   <div class="logo-area">
     <span class="logo-tag">Joint Entrance Examination</span>
     <div class="logo-title">JEE <span>SYSTEM</span><br>ANALYZER</div>
     <div class="logo-sub">Select a subject to begin analysis</div>
   </div>
-
   <div class="subject-grid">
     <div class="subj-card" data-s="phys" onclick="openSubject('phys')">
       <div class="sc-num">// 01</div>
@@ -301,14 +212,9 @@ body{
       <div class="sc-wt">40–45%</div>
       <div class="sc-wt-l">Mechanics alone</div>
       <div class="sc-bar"><div class="sc-bar-f" style="width:90%"></div></div>
-      <div class="sc-tags">
-        <span class="sc-tag">16 units</span>
-        <span class="sc-tag">4 systems</span>
-        <span class="sc-tag">5 ★ units</span>
-      </div>
+      <div class="sc-tags"><span class="sc-tag">16 units</span><span class="sc-tag">4 systems</span><span class="sc-tag">5 ★ units</span></div>
       <span class="sc-arrow">→</span>
     </div>
-
     <div class="subj-card" data-s="chem" onclick="openSubject('chem')">
       <div class="sc-num">// 02</div>
       <span class="sc-icon">⚗️</span>
@@ -317,59 +223,43 @@ body{
       <div class="sc-wt">35–40%</div>
       <div class="sc-wt-l">Organic chemistry</div>
       <div class="sc-bar"><div class="sc-bar-f" style="width:95%"></div></div>
-      <div class="sc-tags">
-        <span class="sc-tag">20 units</span>
-        <span class="sc-tag">3 branches</span>
-        <span class="sc-tag">6 ★ units</span>
-      </div>
+      <div class="sc-tags"><span class="sc-tag">20 units</span><span class="sc-tag">3 branches</span><span class="sc-tag">6 ★ units</span></div>
       <span class="sc-arrow">→</span>
     </div>
-
     <div class="subj-card" data-s="math" onclick="openSubject('math')">
       <div class="sc-num">// 03</div>
       <span class="sc-icon">∑</span>
       <div class="sc-name">Mathematics</div>
-      <div class="sc-sub">Logic + precision.<br>Calculus dominates.</div>
-      <div class="sc-wt">~33%</div>
-      <div class="sc-wt-l">Equal paper weight</div>
-      <div class="sc-bar"><div class="sc-bar-f" style="width:75%"></div></div>
-      <div class="sc-tags">
-        <span class="sc-tag">Coming soon</span>
-        <span class="sc-tag">Preview</span>
-      </div>
+      <div class="sc-sub">4 pillars, 16 units.<br>Calculus dominates.</div>
+      <div class="sc-wt">35–40%</div>
+      <div class="sc-wt-l">Calculus weight</div>
+      <div class="sc-bar"><div class="sc-bar-f" style="width:85%"></div></div>
+      <div class="sc-tags"><span class="sc-tag">16 units</span><span class="sc-tag">4 pillars</span><span class="sc-tag">5 ★ units</span></div>
       <span class="sc-arrow">→</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ PHYSICS PAGE ═══ -->
+<!-- ═══ PHYSICS PAGE ═══ -->
 <div id="page-phys" class="page" style="--ac:var(--phys);--acg:var(--phys-glow)">
   <div class="sp-header">
     <button class="sp-back" onclick="goBack()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-      Back
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Back
     </button>
-    <div class="sp-breadcrumb">
-      <span class="sp-bc-root">JEE</span>
-      <span class="sp-bc-sep">/</span>
-      <span class="sp-bc-cur">Physics</span>
-    </div>
+    <div class="sp-breadcrumb"><span class="sp-bc-root">JEE</span><span class="sp-bc-sep">/</span><span class="sp-bc-cur">Physics</span></div>
     <span class="sp-badge">⚡ PHYS</span>
   </div>
-
   <div class="sp-hero">
     <div class="sp-hero-tag">// SYSTEM ANALYSIS — PHYSICS</div>
     <div class="sp-hero-title">4 Systems.<br><em>1 Rank.</em></div>
     <div class="sp-hero-sub">Physics is not 20 chapters — it's 4 interconnected systems. Mechanics + Electrodynamics = 75% paper power.</div>
   </div>
-
   <div class="sp-kpi">
     <div class="kbox"><div class="kv">4</div><div class="kl">Root Systems</div></div>
     <div class="kbox"><div class="kv">5</div><div class="kl">Star Units</div></div>
     <div class="kbox"><div class="kv">75%</div><div class="kl">Mech + Electro</div></div>
     <div class="kbox"><div class="kv">40–45%</div><div class="kl">Mechanics Alone</div></div>
   </div>
-
   <div class="sp-content">
     <div class="sp-sidebar" id="phys-sidebar">
       <div class="sb-section">
@@ -403,10 +293,7 @@ body{
         <div class="sb-item" onclick="showPhysSection('modern',this)"><div class="sb-dot"></div>Modern Physics<span class="sb-pct">6%</span></div>
       </div>
     </div>
-
     <div class="sp-main" id="phys-main">
-
-      <!-- OVERVIEW -->
       <div id="ps-overview" class="section-block active">
         <div class="branch-cards" id="phys-branch-cards">
           <div class="bc-mini active" onclick="physBranchClick('mech',this)">
@@ -426,7 +313,6 @@ body{
             <div class="bmbar"><div class="bmfill" style="width:38%;background:var(--math)"></div></div>
           </div>
         </div>
-
         <div id="phys-unit-block">
           <div class="panel" style="margin-bottom:1rem">
             <div class="panel-title" id="phys-unit-title">Mechanics — Units</div>
@@ -434,12 +320,8 @@ body{
           </div>
           <div id="phys-detail-drawer" class="detail-drawer"></div>
         </div>
-
         <div class="ov-grid">
-          <div class="panel">
-            <div class="panel-title">Weight Distribution</div>
-            <div class="chart-wrap"><canvas id="physDonut"></canvas></div>
-          </div>
+          <div class="panel"><div class="panel-title">Weight Distribution</div><div class="chart-wrap"><canvas id="physDonut"></canvas></div></div>
           <div class="panel">
             <div class="panel-title">Priority Tiers</div>
             <div class="pri-grid">
@@ -449,7 +331,6 @@ body{
             </div>
           </div>
         </div>
-
         <div class="ov-grid">
           <div class="panel">
             <div class="panel-title">Chapter Linkages</div>
@@ -473,12 +354,7 @@ body{
             </table>
           </div>
         </div>
-
-        <div class="panel">
-          <div class="panel-title" id="physBarTitle">System Weightage — Bar Chart</div>
-          <div class="chart-wrap-tall"><canvas id="physBar"></canvas></div>
-        </div>
-
+        <div class="panel"><div class="panel-title">System Weightage — Bar Chart</div><div class="chart-wrap-tall"><canvas id="physBar"></canvas></div></div>
         <div class="truth-box" style="margin-top:1rem">
           <div class="tb-title">Hard Truth</div>
           <div class="tb-items">
@@ -490,8 +366,6 @@ body{
           </div>
         </div>
       </div>
-
-      <!-- Individual unit sections (condensed) -->
       <div id="ps-kinematics" class="section-block"></div>
       <div id="ps-newton" class="section-block"></div>
       <div id="ps-wep" class="section-block"></div>
@@ -506,39 +380,30 @@ body{
       <div id="ps-emi" class="section-block"></div>
       <div id="ps-optics" class="section-block"></div>
       <div id="ps-modern" class="section-block"></div>
-
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ CHEMISTRY PAGE ═══ -->
+<!-- ═══ CHEMISTRY PAGE ═══ -->
 <div id="page-chem" class="page" style="--ac:var(--chem);--acg:var(--chem-glow)">
   <div class="sp-header">
     <button class="sp-back" onclick="goBack()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-      Back
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Back
     </button>
-    <div class="sp-breadcrumb">
-      <span class="sp-bc-root">JEE</span>
-      <span class="sp-bc-sep">/</span>
-      <span class="sp-bc-cur">Chemistry</span>
-    </div>
+    <div class="sp-breadcrumb"><span class="sp-bc-root">JEE</span><span class="sp-bc-sep">/</span><span class="sp-bc-cur">Chemistry</span></div>
     <span class="sp-badge">⚗️ CHEM</span>
   </div>
-
   <div class="sp-hero">
     <div class="sp-hero-tag">// SYSTEM ANALYSIS — CHEMISTRY</div>
     <div class="sp-hero-title">3 Branches.<br><em>Organic Rules.</em></div>
     <div class="sp-hero-sub">Chemistry = 3 branches, 20 units. Organic carries 35–40%. GOC + Mechanism = rank decider.</div>
   </div>
-
   <div class="sp-kpi">
     <div class="kbox"><div class="kv">20</div><div class="kl">Total Units</div></div>
     <div class="kbox"><div class="kv">6</div><div class="kl">Star Units</div></div>
     <div class="kbox"><div class="kv">~100%</div><div class="kl">Full Syllabus</div></div>
     <div class="kbox"><div class="kv">35–40%</div><div class="kl">Organic Wt.</div></div>
   </div>
-
   <div class="sp-content">
     <div class="sp-sidebar" id="chem-sidebar">
       <div class="sb-section">
@@ -573,10 +438,7 @@ body{
         <div class="sb-item" onclick="showChemSection('biomolecules',this)"><div class="sb-dot"></div>Biomolecules<span class="sb-pct">3.5%</span></div>
       </div>
     </div>
-
     <div class="sp-main" id="chem-main">
-
-      <!-- OVERVIEW -->
       <div id="cs-overview" class="section-block active">
         <div class="branch-cards" id="chem-branch-cards">
           <div class="bc-mini active" onclick="chemBranchClick('phys_c',this)">
@@ -592,18 +454,13 @@ body{
             <div class="bmbar"><div class="bmfill" style="width:95%;background:var(--phys)"></div></div>
           </div>
         </div>
-
         <div class="panel" style="margin-bottom:1rem">
           <div class="panel-title" id="chem-unit-title">Physical — Units</div>
           <table class="unit-table" id="chem-unit-table"></table>
         </div>
         <div id="chem-detail-drawer" class="detail-drawer"></div>
-
         <div class="ov-grid">
-          <div class="panel">
-            <div class="panel-title">Branch Distribution</div>
-            <div class="chart-wrap"><canvas id="chemDonut"></canvas></div>
-          </div>
+          <div class="panel"><div class="panel-title">Branch Distribution</div><div class="chart-wrap"><canvas id="chemDonut"></canvas></div></div>
           <div class="panel">
             <div class="panel-title">Priority Tiers</div>
             <div class="pri-grid">
@@ -613,7 +470,6 @@ body{
             </div>
           </div>
         </div>
-
         <div class="ov-grid">
           <div class="panel">
             <div class="panel-title">Key Formulas</div>
@@ -631,14 +487,9 @@ body{
               <div class="formula-item"><div class="fi-name">Bond Order</div><div class="fi-eq">BO = (Nb - Na) / 2</div></div>
             </div>
           </div>
-          <div class="panel">
-            <div class="panel-title" id="chemBarTitle">Unit Weightage</div>
-            <div class="chart-wrap-tall"><canvas id="chemBar"></canvas></div>
-          </div>
+          <div class="panel"><div class="panel-title">Unit Weightage</div><div class="chart-wrap-tall"><canvas id="chemBar"></canvas></div></div>
         </div>
       </div>
-
-      <!-- Individual chem section blocks -->
       <div id="cs-mole" class="section-block"></div>
       <div id="cs-atomic" class="section-block"></div>
       <div id="cs-thermo_c" class="section-block"></div>
@@ -657,95 +508,223 @@ body{
       <div id="cs-functional" class="section-block"></div>
       <div id="cs-amines" class="section-block"></div>
       <div id="cs-biomolecules" class="section-block"></div>
-
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ MATH PAGE ═══ -->
+<!-- ═══ MATHEMATICS PAGE ═══ -->
 <div id="page-math" class="page" style="--ac:var(--math);--acg:var(--math-glow)">
   <div class="sp-header">
     <button class="sp-back" onclick="goBack()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-      Back
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Back
     </button>
-    <div class="sp-breadcrumb">
-      <span class="sp-bc-root">JEE</span>
-      <span class="sp-bc-sep">/</span>
-      <span class="sp-bc-cur">Mathematics</span>
-    </div>
+    <div class="sp-breadcrumb"><span class="sp-bc-root">JEE</span><span class="sp-bc-sep">/</span><span class="sp-bc-cur">Mathematics</span></div>
     <span class="sp-badge">∑ MATH</span>
   </div>
-  <div class="math-coming">
-    <div class="math-icon">∑</div>
-    <div class="math-title">Mathematics</div>
-    <div class="math-sub">Full analysis coming soon. Mathematics carries equal weight (~33%) in JEE. Calculus + Algebra + Coordinate Geometry dominate.</div>
-    <span class="math-eta">// PREVIEW MODE</span>
-    <div class="math-preview">
-      <div class="mp-card"><div class="mpc-n">Calculus</div><div class="mpc-p">~30%</div></div>
-      <div class="mp-card"><div class="mpc-n">Algebra</div><div class="mpc-p">~25%</div></div>
-      <div class="mp-card"><div class="mpc-n">Coord. Geo</div><div class="mpc-p">~20%</div></div>
-      <div class="mp-card"><div class="mpc-n">Vectors</div><div class="mpc-p">~10%</div></div>
-      <div class="mp-card"><div class="mpc-n">Probability</div><div class="mpc-p">~8%</div></div>
-      <div class="mp-card"><div class="mpc-n">Trigonometry</div><div class="mpc-p">~7%</div></div>
+  <div class="sp-hero">
+    <div class="sp-hero-tag">// SYSTEM ANALYSIS — MATHEMATICS</div>
+    <div class="sp-hero-title">4 Pillars.<br><em>Calculus Wins.</em></div>
+    <div class="sp-hero-sub">Maths is not theory — it's pattern recognition + problem exposure. Calculus + Algebra = 70% paper done.</div>
+  </div>
+  <div class="sp-kpi">
+    <div class="kbox"><div class="kv">4</div><div class="kl">Pillars</div></div>
+    <div class="kbox"><div class="kv">5</div><div class="kl">Star Units</div></div>
+    <div class="kbox"><div class="kv">38%</div><div class="kl">Calculus Weight</div></div>
+    <div class="kbox"><div class="kv">70%</div><div class="kl">Calc + Algebra</div></div>
+  </div>
+  <div class="sp-content">
+    <div class="sp-sidebar" id="math-sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Overview</div>
+        <div class="sb-item active" onclick="showMathSection('overview',this)"><div class="sb-dot"></div>Pillar Map</div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Pillar 01 — Calculus</div>
+        <div class="sb-item" onclick="showMathSection('integration',this)"><div class="sb-dot"></div>Integration<span class="sb-stars"> ★★★</span><span class="sb-pct">12%</span></div>
+        <div class="sb-item" onclick="showMathSection('aod',this)"><div class="sb-dot"></div>App. of Derivatives<span class="sb-stars"> ★</span><span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showMathSection('differentiation',this)"><div class="sb-dot"></div>Differentiation<span class="sb-pct">8%</span></div>
+        <div class="sb-item" onclick="showMathSection('limits',this)"><div class="sb-dot"></div>Limits & Continuity<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showMathSection('de',this)"><div class="sb-dot"></div>Differential Eq.<span class="sb-pct">4%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Pillar 02 — Algebra</div>
+        <div class="sb-item" onclick="showMathSection('complex',this)"><div class="sb-dot"></div>Complex Numbers<span class="sb-stars"> ★</span><span class="sb-pct">9%</span></div>
+        <div class="sb-item" onclick="showMathSection('pnc',this)"><div class="sb-dot"></div>PnC<span class="sb-stars"> ★</span><span class="sb-pct">8%</span></div>
+        <div class="sb-item" onclick="showMathSection('matrices',this)"><div class="sb-dot"></div>Matrices & Det.<span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showMathSection('sequence',this)"><div class="sb-dot"></div>Sequence & Series<span class="sb-pct">7%</span></div>
+        <div class="sb-item" onclick="showMathSection('binomial',this)"><div class="sb-dot"></div>Binomial Theorem<span class="sb-pct">4%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Pillar 03 — Coord. Geometry</div>
+        <div class="sb-item" onclick="showMathSection('conics',this)"><div class="sb-dot"></div>Conic Sections<span class="sb-stars"> ★★</span><span class="sb-pct">11%</span></div>
+        <div class="sb-item" onclick="showMathSection('straight',this)"><div class="sb-dot"></div>Straight Lines<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showMathSection('circle',this)"><div class="sb-dot"></div>Circle<span class="sb-pct">5%</span></div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Pillar 04 — Vec/3D/Prob</div>
+        <div class="sb-item" onclick="showMathSection('probability',this)"><div class="sb-dot"></div>Probability<span class="sb-pct">6%</span></div>
+        <div class="sb-item" onclick="showMathSection('vectors',this)"><div class="sb-dot"></div>Vectors<span class="sb-pct">4%</span></div>
+        <div class="sb-item" onclick="showMathSection('threed',this)"><div class="sb-dot"></div>3D Geometry<span class="sb-pct">5%</span></div>
+      </div>
+    </div>
+
+    <div class="sp-main" id="math-main">
+      <!-- MATH OVERVIEW -->
+      <div id="ms-overview" class="section-block active">
+        <div class="branch-cards" id="math-branch-cards">
+          <div class="bc-mini active" onclick="mathBranchClick('calc',this)">
+            <div class="bmn">PILLAR 01</div><div class="bmp" style="color:var(--math)">38%</div><div class="bml">Calculus</div>
+            <div class="bmbar"><div class="bmfill" style="width:100%;background:var(--math)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="mathBranchClick('alg',this)">
+            <div class="bmn">PILLAR 02</div><div class="bmp" style="color:var(--chem)">32%</div><div class="bml">Algebra</div>
+            <div class="bmbar"><div class="bmfill" style="width:84%;background:var(--chem)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="mathBranchClick('coord',this)">
+            <div class="bmn">PILLAR 03</div><div class="bmp" style="color:var(--phys)">22%</div><div class="bml">Coord. Geometry</div>
+            <div class="bmbar"><div class="bmfill" style="width:58%;background:var(--phys)"></div></div>
+          </div>
+          <div class="bc-mini" onclick="mathBranchClick('vect',this)">
+            <div class="bmn">PILLAR 04</div><div class="bmp" style="color:var(--gold)">12%</div><div class="bml">Vec / 3D / Prob</div>
+            <div class="bmbar"><div class="bmfill" style="width:32%;background:var(--gold)"></div></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:1rem">
+          <div class="panel-title" id="math-unit-title">Calculus — Units</div>
+          <table class="unit-table" id="math-unit-table"></table>
+        </div>
+        <div id="math-detail-drawer" class="detail-drawer"></div>
+
+        <div class="ov-grid">
+          <div class="panel"><div class="panel-title">Pillar Distribution</div><div class="chart-wrap"><canvas id="mathDonut"></canvas></div></div>
+          <div class="panel">
+            <div class="panel-title">Priority Tiers</div>
+            <div class="pri-grid">
+              <div class="ptier pt-top"><div class="ptl">Top</div><div class="pti">Integration<br>AOD<br>Conics<br>Complex No.<br>PnC</div></div>
+              <div class="ptier pt-mid"><div class="ptl">Mid</div><div class="pti">Matrices<br>Sequence<br>Straight Line<br>Probability<br>Limits</div></div>
+              <div class="ptier pt-low"><div class="ptl">Low</div><div class="pti">Binomial<br>3D Geometry<br>Vectors</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Key Formulas</div>
+            <div class="formula-list">
+              <div class="formula-item"><div class="fi-name">∫xⁿ dx</div><div class="fi-eq" style="color:var(--math)">xⁿ⁺¹/(n+1) + C</div></div>
+              <div class="formula-item"><div class="fi-name">IBP</div><div class="fi-eq" style="color:var(--math)">∫u dv = uv − ∫v du</div></div>
+              <div class="formula-item"><div class="fi-name">Def. Integral Prop</div><div class="fi-eq" style="color:var(--math)">∫₀ᵃ f(x)dx = ∫₀ᵃ f(a−x)dx</div></div>
+              <div class="formula-item"><div class="fi-name">d/dx(xⁿ)</div><div class="fi-eq" style="color:var(--math)">nxⁿ⁻¹</div></div>
+              <div class="formula-item"><div class="fi-name">Chain Rule</div><div class="fi-eq" style="color:var(--math)">f'(g(x))·g'(x)</div></div>
+              <div class="formula-item"><div class="fi-name">lim sin x/x</div><div class="fi-eq" style="color:var(--math)">→ 1 as x→0</div></div>
+              <div class="formula-item"><div class="fi-name">Euler Number</div><div class="fi-eq" style="color:var(--math)">(1+1/x)ˣ → e as x→∞</div></div>
+              <div class="formula-item"><div class="fi-name">Complex |z|</div><div class="fi-eq" style="color:var(--math)">√(a²+b²)</div></div>
+              <div class="formula-item"><div class="fi-name">De Moivre</div><div class="fi-eq" style="color:var(--math)">(cosθ+i sinθ)ⁿ = cos nθ+i sin nθ</div></div>
+              <div class="formula-item"><div class="fi-name">ⁿPᵣ</div><div class="fi-eq" style="color:var(--math)">n!/(n−r)!</div></div>
+              <div class="formula-item"><div class="fi-name">ⁿCᵣ</div><div class="fi-eq" style="color:var(--math)">n!/[r!(n−r)!]</div></div>
+              <div class="formula-item"><div class="fi-name">AP Sum Sₙ</div><div class="fi-eq" style="color:var(--math)">n/2·[2a+(n−1)d]</div></div>
+              <div class="formula-item"><div class="fi-name">GP Sum S∞</div><div class="fi-eq" style="color:var(--math)">a/(1−r), |r|&lt;1</div></div>
+              <div class="formula-item"><div class="fi-name">A⁻¹</div><div class="fi-eq" style="color:var(--math)">adj(A)/det(A)</div></div>
+              <div class="formula-item"><div class="fi-name">Parabola</div><div class="fi-eq" style="color:var(--math)">y² = 4ax</div></div>
+              <div class="formula-item"><div class="fi-name">Ellipse</div><div class="fi-eq" style="color:var(--math)">x²/a² + y²/b² = 1</div></div>
+              <div class="formula-item"><div class="fi-name">Hyperbola</div><div class="fi-eq" style="color:var(--math)">x²/a² − y²/b² = 1</div></div>
+              <div class="formula-item"><div class="fi-name">Bayes' Theorem</div><div class="fi-eq" style="color:var(--math)">P(B|Aᵢ)P(Aᵢ)/ΣP(B|Aⱼ)P(Aⱼ)</div></div>
+              <div class="formula-item"><div class="fi-name">Dot Product</div><div class="fi-eq" style="color:var(--math)">a·b = |a||b|cosθ</div></div>
+              <div class="formula-item"><div class="fi-name">Σn</div><div class="fi-eq" style="color:var(--math)">n(n+1)/2</div></div>
+              <div class="formula-item"><div class="fi-name">Σn²</div><div class="fi-eq" style="color:var(--math)">n(n+1)(2n+1)/6</div></div>
+            </div>
+          </div>
+          <div class="panel"><div class="panel-title" id="mathBarTitle">Unit Weightage</div><div class="chart-wrap-tall"><canvas id="mathBar"></canvas></div></div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="panel">
+            <div class="panel-title">Topic Linkages</div>
+            <div class="link-rows">
+              <div class="link-r"><div class="lr-a">AOD</div><div class="lr-op">⊕</div><div class="lr-b">Coordinate Geometry</div><div class="lr-tag">Advanced</div></div>
+              <div class="link-r"><div class="lr-a">Integration</div><div class="lr-op">⊕</div><div class="lr-b">Area + Functions</div><div class="lr-tag">Combo</div></div>
+              <div class="link-r"><div class="lr-a">Complex Numbers</div><div class="lr-op">⊕</div><div class="lr-b">Geometry</div><div class="lr-tag">Chain</div></div>
+              <div class="link-r"><div class="lr-a">PnC</div><div class="lr-op">⊕</div><div class="lr-b">Probability</div><div class="lr-tag">Mixed</div></div>
+              <div class="link-r"><div class="lr-a">Matrices</div><div class="lr-op">⊕</div><div class="lr-b">3D Geometry</div><div class="lr-tag">Core</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Depth Rule</div>
+            <table class="depth-tbl">
+              <thead><tr><th>Type</th><th>Mode</th><th>Level</th></tr></thead>
+              <tbody>
+                <tr><td>Calculus core, PnC</td><td>Multi-step problems</td><td><span class="pri-pill pri-top">Very High</span></td></tr>
+                <tr><td>Algebra, Coord. Geo.</td><td>Visualization + practice</td><td><span class="pri-pill pri-mid">Medium-High</span></td></tr>
+                <tr><td>Vectors, 3D, Binomial</td><td>Formula + PYQ</td><td><span class="pri-pill pri-low">Low</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="truth-box math-tb" style="margin-top:1rem">
+          <div class="tb-title">Hard Truth — Mathematics</div>
+          <div class="tb-items">
+            <div class="tb-item">Maths is NOT about theory → it's about problem exposure</div>
+            <div class="tb-item">If you solve &lt;50 questions per chapter → you're underprepared</div>
+            <div class="tb-item">Calculus + Algebra → 70% paper done</div>
+            <div class="tb-item">Add Geometry → 85% done. Add Vector/3D → near full</div>
+            <div class="tb-item">JEE Advanced NEVER asks isolated questions — linking chapters = rank</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual math section blocks -->
+      <div id="ms-integration" class="section-block"></div>
+      <div id="ms-aod" class="section-block"></div>
+      <div id="ms-differentiation" class="section-block"></div>
+      <div id="ms-limits" class="section-block"></div>
+      <div id="ms-de" class="section-block"></div>
+      <div id="ms-complex" class="section-block"></div>
+      <div id="ms-pnc" class="section-block"></div>
+      <div id="ms-matrices" class="section-block"></div>
+      <div id="ms-sequence" class="section-block"></div>
+      <div id="ms-binomial" class="section-block"></div>
+      <div id="ms-conics" class="section-block"></div>
+      <div id="ms-straight" class="section-block"></div>
+      <div id="ms-circle" class="section-block"></div>
+      <div id="ms-probability" class="section-block"></div>
+      <div id="ms-vectors" class="section-block"></div>
+      <div id="ms-threed" class="section-block"></div>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ─── BG CANVAS ANIMATION ───
-const canvas = document.getElementById('bgCanvas');
-const ctx2 = canvas.getContext('2d');
-let W, H, particles = [], lines = [];
-
+// ─── BG ANIMATION ───
+const canvas=document.getElementById('bgCanvas'),ctx2=canvas.getContext('2d');
+let W,H,particles=[];
 function resizeCvs(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;initP()}
-function initP(){
-  particles=[];
-  for(let i=0;i<60;i++) particles.push({
-    x:Math.random()*W,y:Math.random()*H,
-    vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,
-    r:Math.random()*1.5+.5,
-    color:['#ff6b35','#a78bfa','#22d3ee','#fbbf24'][Math.floor(Math.random()*4)]
-  });
-}
-
+function initP(){particles=[];for(let i=0;i<60;i++)particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5,color:['#ff6b35','#a78bfa','#22d3ee','#fbbf24'][Math.floor(Math.random()*4)]})}
 function drawBg(){
   ctx2.clearRect(0,0,W,H);
-  // grid
-  ctx2.strokeStyle='rgba(255,255,255,0.025)';
-  ctx2.lineWidth=.5;
-  const gsize=60;
-  for(let x=0;x<W;x+=gsize){ctx2.beginPath();ctx2.moveTo(x,0);ctx2.lineTo(x,H);ctx2.stroke()}
-  for(let y=0;y<H;y+=gsize){ctx2.beginPath();ctx2.moveTo(0,y);ctx2.lineTo(W,y);ctx2.stroke()}
-  // particles
+  ctx2.strokeStyle='rgba(255,255,255,0.025)';ctx2.lineWidth=.5;
+  const g=60;for(let x=0;x<W;x+=g){ctx2.beginPath();ctx2.moveTo(x,0);ctx2.lineTo(x,H);ctx2.stroke()}
+  for(let y=0;y<H;y+=g){ctx2.beginPath();ctx2.moveTo(0,y);ctx2.lineTo(W,y);ctx2.stroke()}
   particles.forEach((p,i)=>{
     p.x+=p.vx;p.y+=p.vy;
-    if(p.x<0||p.x>W)p.vx*=-1;
-    if(p.y<0||p.y>H)p.vy*=-1;
-    ctx2.beginPath();ctx2.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx2.fillStyle=p.color+'80';ctx2.fill();
-    // connections
-    particles.slice(i+1).forEach(q=>{
-      const d=Math.hypot(p.x-q.x,p.y-q.y);
-      if(d<120){
-        ctx2.beginPath();ctx2.moveTo(p.x,p.y);ctx2.lineTo(q.x,q.y);
-        ctx2.strokeStyle=`rgba(255,255,255,${.04*(1-d/120)})`;ctx2.lineWidth=.5;ctx2.stroke();
-      }
-    });
+    if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+    ctx2.beginPath();ctx2.arc(p.x,p.y,p.r,0,Math.PI*2);ctx2.fillStyle=p.color+'80';ctx2.fill();
+    particles.slice(i+1).forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<120){ctx2.beginPath();ctx2.moveTo(p.x,p.y);ctx2.lineTo(q.x,q.y);ctx2.strokeStyle=`rgba(255,255,255,${.04*(1-d/120)})`;ctx2.lineWidth=.5;ctx2.stroke()}});
   });
   requestAnimationFrame(drawBg);
 }
-window.addEventListener('resize',resizeCvs);
-resizeCvs();drawBg();
+window.addEventListener('resize',resizeCvs);resizeCvs();drawBg();
 
-// ─── NAVIGATION ───
+// ─── NAV ───
 function openSubject(s){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+s).classList.add('active');
   window.scrollTo(0,0);
-  if(s==='phys' && !physChartsBuilt) buildPhysCharts();
-  if(s==='chem' && !chemChartsBuilt) buildChemCharts();
+  if(s==='phys'&&!physChartsBuilt)buildPhysCharts();
+  if(s==='chem'&&!chemChartsBuilt)buildChemCharts();
+  if(s==='math'&&!mathChartsBuilt)buildMathCharts();
 }
 function goBack(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -779,16 +758,13 @@ const PHYS_DATA={
   ]}
 };
 
-let curPhysBranch='mech', physChartsBuilt=false;
-let physDonutChart, physBarChart2;
+let curPhysBranch='mech',physChartsBuilt=false,physDonutChart,physBarChart2;
 
 function physBranchClick(key,el){
   curPhysBranch=key;
   document.querySelectorAll('#phys-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  renderPhysUnits();
-  if(physBarChart2){physBarChart2.destroy();physBarChart2=null;}
-  buildPhysBar();
+  el.classList.add('active');renderPhysUnits();
+  if(physBarChart2){physBarChart2.destroy();physBarChart2=null;}buildPhysBar();
 }
 
 function renderPhysUnits(){
@@ -796,17 +772,7 @@ function renderPhysUnits(){
   document.getElementById('phys-unit-title').textContent=br.label+' — Units';
   const tbl=document.getElementById('phys-unit-table');
   const max=Math.max(...br.units.map(u=>u.pct));
-  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>
-  ${br.units.map(u=>`
-    <tr onclick="showPhysUnitDetail('${u.id}')">
-      <td class="u-name">${u.name}</td>
-      <td class="u-stars">${'★'.repeat(u.stars)||'—'}</td>
-      <td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td>
-      <td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td>
-      <td><span class="pri-pill pri-${u.priority==='top'?'top':u.priority==='mid'?'mid':'low'}">${u.priority.toUpperCase()}</span></td>
-    </tr>
-  `).join('')}
-  </tbody>`;
+  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>${br.units.map(u=>`<tr onclick="showPhysUnitDetail('${u.id}')"><td class="u-name">${u.name}</td><td class="u-stars">${'★'.repeat(u.stars)||'—'}</td><td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td><td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td><td><span class="pri-pill pri-${u.priority}">${u.priority.toUpperCase()}</span></td></tr>`).join('')}</tbody>`;
 }
 
 function showPhysUnitDetail(id){
@@ -817,61 +783,28 @@ function showPhysUnitDetail(id){
   if(dr.dataset.open===id){dr.classList.remove('open');dr.dataset.open='';return;}
   dr.dataset.open=id;
   const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
-  dr.innerHTML=`
-    <div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('phys-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div>
-    <div class="dd-meta">
-      <div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div>
-      <div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div>
-      <div class="dd-card"><div class="dd-cl">Depth</div><div class="dd-cv">${u.depth==='high'?'High':u.depth==='med'?'Medium':'Low'}</div></div>
-      <div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
-    </div>
-    <div class="dd-note">${u.note}</div>
-    <div class="dd-topics-l">Subtopics</div>
-    ${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}
-  `;
+  dr.innerHTML=`<div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('phys-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div><div class="dd-meta"><div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div><div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div><div class="dd-card"><div class="dd-cl">Depth</div><div class="dd-cv">${u.depth==='high'?'High':u.depth==='med'?'Medium':'Low'}</div></div><div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div></div><div class="dd-note">${u.note}</div><div class="dd-topics-l">Subtopics</div>${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}`;
   dr.classList.add('open');
 }
 
 function buildPhysCharts(){
   physChartsBuilt=true;
-  // Donut
-  physDonutChart=new Chart(document.getElementById('physDonut').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:['Mechanics 42%','Thermo 11%','Electrodynamics 32%','Modern+Optics 17%'],
-    datasets:[{data:[42,11,32,17],backgroundColor:['#ff6b35','#4ade80','#a78bfa','#22d3ee'],borderColor:'#05050f',borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
-  });
-  buildPhysBar();
-  renderPhysUnits();
+  physDonutChart=new Chart(document.getElementById('physDonut').getContext('2d'),{type:'doughnut',data:{labels:['Mechanics 42%','Thermo 11%','Electrodynamics 32%','Modern+Optics 17%'],datasets:[{data:[42,11,32,17],backgroundColor:['#ff6b35','#4ade80','#a78bfa','#22d3ee'],borderColor:'#05050f',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
+  buildPhysBar();renderPhysUnits();
 }
 
 function buildPhysBar(){
   const br=PHYS_DATA[curPhysBranch];
   if(physBarChart2)physBarChart2.destroy();
-  physBarChart2=new Chart(document.getElementById('physBar').getContext('2d'),{
-    type:'bar',
-    data:{labels:br.units.map(u=>u.name),
-    datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},
-              y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}
-  });
+  physBarChart2=new Chart(document.getElementById('physBar').getContext('2d'),{type:'bar',data:{labels:br.units.map(u=>u.name),datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}});
 }
 
 function showPhysSection(id,el){
   document.querySelectorAll('#phys-sidebar .sb-item').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
   document.querySelectorAll('#phys-main .section-block').forEach(s=>s.classList.remove('active'));
-  const sec=document.getElementById('ps-'+id);
-  if(!sec.innerHTML.trim()||id==='overview'){
-    document.getElementById('ps-overview').classList.add('active');
-    if(id!=='overview'){
-      const allU=Object.values(PHYS_DATA).flatMap(b=>b.units);
-      const u=allU.find(x=>x.id===id);
-      if(u) showPhysUnitDetail(id);
-    }
-  } else { sec.classList.add('active'); }
+  document.getElementById('ps-overview').classList.add('active');
+  if(id!=='overview'){const allU=Object.values(PHYS_DATA).flatMap(b=>b.units);const u=allU.find(x=>x.id===id);if(u)showPhysUnitDetail(id);}
 }
 
 // ─── CHEMISTRY DATA ───
@@ -902,16 +835,10 @@ const CHEM_DATA={
   ]}
 };
 
-let curChemBranch='phys_c', chemChartsBuilt=false;
-let chemDonutChart, chemBarChart;
+let curChemBranch='phys_c',chemChartsBuilt=false,chemDonutChart,chemBarChart;
 
 function chemBranchClick(key,el){
-  curChemBranch=key;
-  document.querySelectorAll('#chem-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  renderChemUnits();
-  if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}
-  buildChemBar();
+  curChemBranch=key;document.querySelectorAll('#chem-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderChemUnits();if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}buildChemBar();
 }
 
 function renderChemUnits(){
@@ -919,65 +846,26 @@ function renderChemUnits(){
   document.getElementById('chem-unit-title').textContent=br.label+' — Units';
   const tbl=document.getElementById('chem-unit-table');
   const max=Math.max(...br.units.map(u=>u.pct));
-  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>
-  ${br.units.map(u=>`
-    <tr onclick="showChemUnitDetail('${u.id}')">
-      <td class="u-name">${u.name}</td>
-      <td class="u-stars">${'★'.repeat(u.stars)||'—'}</td>
-      <td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td>
-      <td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td>
-      <td><span class="pri-pill pri-${u.priority==='top'?'top':u.priority==='mid'?'mid':'low'}">${u.priority.toUpperCase()}</span></td>
-    </tr>
-  `).join('')}
-  </tbody>`;
+  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>${br.units.map(u=>`<tr onclick="showChemUnitDetail('${u.id}')"><td class="u-name">${u.name}</td><td class="u-stars">${'★'.repeat(u.stars)||'—'}</td><td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td><td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td><td><span class="pri-pill pri-${u.priority}">${u.priority.toUpperCase()}</span></td></tr>`).join('')}</tbody>`;
 }
 
 function showChemUnitDetail(id){
-  const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);
-  const u=allU.find(x=>x.id===id);
-  const br=Object.values(CHEM_DATA).find(b=>b.units.find(x=>x.id===id));
-  const dr=document.getElementById('chem-detail-drawer');
+  const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);const u=allU.find(x=>x.id===id);const br=Object.values(CHEM_DATA).find(b=>b.units.find(x=>x.id===id));const dr=document.getElementById('chem-detail-drawer');
   if(dr.dataset.open===id){dr.classList.remove('open');dr.dataset.open='';return;}
-  dr.dataset.open=id;
-  const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
-  dr.innerHTML=`
-    <div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('chem-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div>
-    <div class="dd-meta">
-      <div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div>
-      <div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div>
-      <div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
-    </div>
-    ${u.note?`<div class="dd-note">${u.note}</div>`:''}
-    <div class="dd-topics-l">Subtopics</div>
-    ${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}
-  `;
+  dr.dataset.open=id;const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
+  dr.innerHTML=`<div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('chem-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div><div class="dd-meta"><div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div><div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div><div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div></div>${u.note?`<div class="dd-note">${u.note}</div>`:''}<div class="dd-topics-l">Subtopics</div>${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}`;
   dr.classList.add('open');
 }
 
 function buildChemCharts(){
   chemChartsBuilt=true;
-  chemDonutChart=new Chart(document.getElementById('chemDonut').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:['Physical 32%','Inorganic 28%','Organic 38%'],
-    datasets:[{data:[32,28,38],backgroundColor:['#a78bfa','#4ade80','#ff6b35'],borderColor:'#05050f',borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
-  });
-  buildChemBar();
-  renderChemUnits();
+  chemDonutChart=new Chart(document.getElementById('chemDonut').getContext('2d'),{type:'doughnut',data:{labels:['Physical 32%','Inorganic 28%','Organic 38%'],datasets:[{data:[32,28,38],backgroundColor:['#a78bfa','#4ade80','#ff6b35'],borderColor:'#05050f',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}});
+  buildChemBar();renderChemUnits();
 }
 
 function buildChemBar(){
-  const br=CHEM_DATA[curChemBranch];
-  if(chemBarChart)chemBarChart.destroy();
-  chemBarChart=new Chart(document.getElementById('chemBar').getContext('2d'),{
-    type:'bar',
-    data:{labels:br.units.map(u=>u.name),
-    datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},
-              y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}
-  });
+  const br=CHEM_DATA[curChemBranch];if(chemBarChart)chemBarChart.destroy();
+  chemBarChart=new Chart(document.getElementById('chemBar').getContext('2d'),{type:'bar',data:{labels:br.units.map(u=>u.name),datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}});
 }
 
 function showChemSection(id,el){
@@ -986,21 +874,178 @@ function showChemSection(id,el){
   document.querySelectorAll('#chem-main .section-block').forEach(s=>s.classList.remove('active'));
   document.getElementById('cs-overview').classList.add('active');
   if(id!=='overview'){
-    const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);
-    const u=allU.find(x=>x.id===id);
+    const allU=Object.values(CHEM_DATA).flatMap(b=>b.units);const u=allU.find(x=>x.id===id);
     if(u){
       const brKey=Object.keys(CHEM_DATA).find(k=>CHEM_DATA[k].units.find(x=>x.id===id));
-      if(brKey!==curChemBranch){
-        curChemBranch=brKey;
-        document.querySelectorAll('#chem-branch-cards .bc-mini').forEach((c,i)=>{
-          c.classList.remove('active');
-          if(Object.keys(CHEM_DATA)[i]===brKey)c.classList.add('active');
-        });
-        renderChemUnits();
-        if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}
-        buildChemBar();
-      }
+      if(brKey!==curChemBranch){curChemBranch=brKey;document.querySelectorAll('#chem-branch-cards .bc-mini').forEach((c,i)=>{c.classList.remove('active');if(Object.keys(CHEM_DATA)[i]===brKey)c.classList.add('active');});renderChemUnits();if(chemBarChart){chemBarChart.destroy();chemBarChart=null;}buildChemBar();}
       setTimeout(()=>showChemUnitDetail(id),100);
+    }
+  }
+}
+
+// ─── MATHEMATICS DATA ───
+const MATH_DATA={
+  calc:{label:'Calculus',color:'#22d3ee',units:[
+    {id:'integration',name:'Integration',pct:12,stars:3,priority:'top',depth:'very high',
+      subtopics:['Substitution','Integration by Parts','Partial Fractions','Definite Integrals','Properties of Def. Integrals','Area under Curve'],
+      formulas:['∫xⁿ dx = xⁿ⁺¹/(n+1)+C','∫eˣ dx = eˣ+C','∫(1/x) dx = ln|x|+C','∫u dv = uv−∫v du','∫₀ᵃ f(x)dx = ∫₀ᵃ f(a−x)dx','∫sin x dx = −cos x+C','∫cos x dx = sin x+C','∫sec²x dx = tan x+C'],
+      note:'Highest weight in Maths. Multi-trick problems are the norm in Advanced.'},
+    {id:'aod',name:'App. of Derivatives',pct:9,stars:1,priority:'top',depth:'high',
+      subtopics:['Monotonicity','Maxima & Minima','Tangent & Normal','Rate of Change',"Rolle's Theorem",'Mean Value Theorem'],
+      formulas:['Slope of tangent = dy/dx','Normal slope = −dx/dy','f\'(x)=0 → critical point','f\'\'(x)>0 → local min','f\'\'(x)<0 → local max'],
+      note:'Word problems + graph-based traps. Mixes with Coord. Geo. in Advanced.'},
+    {id:'differentiation',name:'Differentiation',pct:8,stars:0,priority:'mid',depth:'high',
+      subtopics:['Chain Rule','Implicit Differentiation','Inverse Trig Derivatives','Parametric Diff.','Higher Order Derivatives','Logarithmic Diff.'],
+      formulas:['d/dx(xⁿ) = nxⁿ⁻¹','d/dx(eˣ) = eˣ','d/dx(ln x) = 1/x','d/dx(sin x) = cos x','d/dx(cos x) = −sin x','d/dx(tan x) = sec²x','d/dx(sin⁻¹x) = 1/√(1−x²)'],
+      note:'Speed + accuracy key. Mixed functions appear frequently.'},
+    {id:'limits',name:'Limits & Continuity',pct:6,stars:0,priority:'mid',depth:'med',
+      subtopics:['Standard Limits',"L'Hôpital's Rule",'Sandwich Theorem','Continuity at a Point','Differentiability'],
+      formulas:['lim(x→0) sin x/x = 1','lim(x→0) (eˣ−1)/x = 1','lim(x→0) (aˣ−1)/x = ln a','lim(x→∞)(1+1/x)ˣ = e',"L'Hopital: lim f/g = lim f'/g'"],
+      note:'Base of Calculus. Indeterminate forms + standard limits.'},
+    {id:'de',name:'Differential Equations',pct:4,stars:0,priority:'mid',depth:'med',
+      subtopics:['Variable Separable','Linear DE','Homogeneous DE'],
+      formulas:['dy/dx = f(x)·g(y) → separate vars','Linear: dy/dx + Py = Q','IF = e^(∫P dx)','Solution: y·IF = ∫Q·IF dx'],
+      note:'Easy but scoring. Variable separable = most common type.'},
+  ]},
+  alg:{label:'Algebra',color:'#a78bfa',units:[
+    {id:'complex',name:'Complex Numbers',pct:9,stars:1,priority:'top',depth:'high',
+      subtopics:['Argand Plane','Modulus & Argument','Locus Problems',"De Moivre's Theorem",'Roots of Unity','Cube Roots of Unity'],
+      formulas:['z = a+ib','|z| = √(a²+b²)','arg(z) = tan⁻¹(b/a)','z·z̄ = |z|²','e^(iθ) = cosθ+i sinθ','(cosθ+i sinθ)ⁿ = cos nθ+i sin nθ','1+ω+ω²=0 (cube roots)'],
+      note:'Geometry in complex plane = Advanced favourite. Locus problems are key.'},
+    {id:'pnc',name:'Permutation & Combination',pct:8,stars:1,priority:'top',depth:'high',
+      subtopics:['Fundamental Counting','Permutations ⁿPᵣ','Combinations ⁿCᵣ','Circular Permutations','Distribution Problems','Derangements'],
+      formulas:['ⁿPᵣ = n!/(n−r)!','ⁿCᵣ = n!/[r!(n−r)!]','Circular perm = (n−1)!','ⁿCᵣ = ⁿCₙ₋ᵣ','ⁿCᵣ+ⁿCᵣ₋₁ = ⁿ⁺¹Cᵣ'],
+      note:'Logic-heavy + case-based. Requires careful enumeration not formula application.'},
+    {id:'matrices',name:'Matrices & Determinants',pct:7,stars:0,priority:'mid',depth:'med',
+      subtopics:['Matrix Operations','Determinant Properties','Inverse of Matrix',"Cramer's Rule",'System of Equations'],
+      formulas:['det(AB) = det(A)·det(B)','A·A⁻¹ = I','A⁻¹ = adj(A)/det(A)',"Cramer's: x = Dₓ/D",'Cayley-Hamilton theorem'],
+      note:'Direct + scoring. System of equations appears consistently.'},
+    {id:'sequence',name:'Sequence & Series',pct:7,stars:0,priority:'mid',depth:'med',
+      subtopics:['AP','GP','HP','AGP','Sum of Special Series'],
+      formulas:['AP: aₙ = a+(n−1)d','AP Sₙ = n/2[2a+(n−1)d]','GP: aₙ = arⁿ⁻¹','GP S∞ = a/(1−r), |r|<1','Σn = n(n+1)/2','Σn² = n(n+1)(2n+1)/6','Σn³ = [n(n+1)/2]²'],
+      note:'Medium depth. AGP (Arithmetico-Geometric) is asked in Advanced.'},
+    {id:'binomial',name:'Binomial Theorem',pct:4,stars:0,priority:'low',depth:'low',
+      subtopics:['General Term','Middle Term','Coefficient Problems','Greatest Term'],
+      formulas:['(a+b)ⁿ = Σ ⁿCᵣ aⁿ⁻ʳ bʳ','Tᵣ₊₁ = ⁿCᵣ aⁿ⁻ʳ bʳ','Middle term (n even): T_(n/2+1)','(1+x)ⁿ ≈ 1+nx for |x|≪1'],
+      note:'Easy marks — mostly direct formula application.'},
+  ]},
+  coord:{label:'Coord. Geometry',color:'#ff6b35',units:[
+    {id:'conics',name:'Conic Sections',pct:11,stars:2,priority:'top',depth:'very high',
+      subtopics:['Parabola','Ellipse','Hyperbola','Tangent & Normal to Conics','Chord of Contact','Asymptotes'],
+      formulas:['Parabola: y²=4ax','Parabola tangent: y=mx+a/m','Ellipse: x²/a²+y²/b²=1','Ellipse: b²=a²(1−e²)','Hyperbola: x²/a²−y²/b²=1','Rect. Hyperbola: xy=c²','Focal chord: 1/SP+1/SQ=2/l'],
+      note:'Most difficult in Coord. Geo. Geometry + algebra mix. Advanced loves chord problems.'},
+    {id:'straight',name:'Straight Lines',pct:6,stars:0,priority:'mid',depth:'med',
+      subtopics:['Slope','Various Forms of Line','Angle Between Lines','Distance from Point to Line','Family of Lines'],
+      formulas:['m = (y₂−y₁)/(x₂−x₁)','y−y₁ = m(x−x₁)','d = |ax₁+by₁+c|/√(a²+b²)','tan θ = |(m₁−m₂)/(1+m₁m₂)|','m₁=m₂ → parallel','m₁·m₂=−1 → perpendicular'],
+      note:'Base for everything. Master the family of lines concept.'},
+    {id:'circle',name:'Circle',pct:5,stars:0,priority:'mid',depth:'med',
+      subtopics:['Standard & General Form','Tangent to Circle','Chord of Contact','Radical Axis','Common Chord'],
+      formulas:['(x−h)²+(y−k)²=r²','x²+y²+2gx+2fy+c=0','Centre:(−g,−f), r=√(g²+f²−c)','Tangent at (x₁,y₁): xx₁+yy₁=r²','Length of tangent=√(S₁)','Radical axis: S₁−S₂=0'],
+      note:'Medium depth. Radical axis + family of circles = important.'},
+  ]},
+  vect:{label:'Vec / 3D / Prob',color:'#fbbf24',units:[
+    {id:'probability',name:'Probability',pct:6,stars:0,priority:'mid',depth:'med',
+      subtopics:['Classical Probability','Conditional Probability',"Bayes' Theorem",'Random Variables','Binomial Distribution'],
+      formulas:['P(A∪B)=P(A)+P(B)−P(A∩B)','P(A|B)=P(A∩B)/P(B)','Bayes: P(Aᵢ|B)=P(B|Aᵢ)P(Aᵢ)/ΣP(B|Aⱼ)P(Aⱼ)','E(X)=Σxᵢ·P(xᵢ)','Binomial P(X=r)=ⁿCᵣ pʳ qⁿ⁻ʳ','Mean=np, Var=npq'],
+      note:'Moderate — Bayes Theorem is the favourite Advanced topic.'},
+    {id:'vectors',name:'Vectors',pct:4,stars:0,priority:'low',depth:'low',
+      subtopics:['Dot Product','Cross Product','Scalar Triple Product','Vector Triple Product'],
+      formulas:['a·b = |a||b|cosθ','a×b = |a||b|sinθ n̂','|a×b|² = |a|²|b|²−(a·b)²','[a b c] = scalar triple product','a×(b×c) = (a·c)b−(a·b)c','Area of △ = ½|a×b|'],
+      note:'Easy marks. Formula-based + direct application. Master cross product.'},
+    {id:'threed',name:'3D Geometry',pct:5,stars:0,priority:'low',depth:'low',
+      subtopics:['Direction Cosines','Equation of Line in 3D','Equation of Plane','Distance Between Lines','Angle Between Plane & Line'],
+      formulas:['l²+m²+n²=1','Line: (x−x₁)/l=(y−y₁)/m=(z−z₁)/n','Plane: ax+by+cz+d=0','d=|ax₁+by₁+cz₁+d|/√(a²+b²+c²)','cosθ=|la+mb+nc|/√(a²+b²+c²)'],
+      note:'Direct formula. PYQ-based preparation is sufficient.'},
+  ]}
+};
+
+let curMathBranch='calc',mathChartsBuilt=false,mathDonutChart,mathBarChart;
+
+function mathBranchClick(key,el){
+  curMathBranch=key;
+  document.querySelectorAll('#math-branch-cards .bc-mini').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderMathUnits();
+  if(mathBarChart){mathBarChart.destroy();mathBarChart=null;}buildMathBar();
+}
+
+function renderMathUnits(){
+  const br=MATH_DATA[curMathBranch];
+  document.getElementById('math-unit-title').textContent=br.label+' — Units';
+  const tbl=document.getElementById('math-unit-table');
+  const max=Math.max(...br.units.map(u=>u.pct));
+  tbl.innerHTML=`<thead><tr><th>Unit</th><th>Stars</th><th>Weight</th><th>Bar</th><th>Priority</th></tr></thead><tbody>${br.units.map(u=>`<tr onclick="showMathUnitDetail('${u.id}')"><td class="u-name">${u.name}</td><td class="u-stars">${'★'.repeat(u.stars)||'—'}</td><td style="font-family:var(--font-mono);color:${br.color}">${u.pct}%</td><td><div class="u-bar-wrap"><div class="u-bar" style="width:${(u.pct/max)*100}%;background:${u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'}"></div></div></td><td><span class="pri-pill pri-${u.priority}">${u.priority.toUpperCase()}</span></td></tr>`).join('')}</tbody>`;
+}
+
+function showMathUnitDetail(id){
+  const allU=Object.values(MATH_DATA).flatMap(b=>b.units);
+  const u=allU.find(x=>x.id===id);
+  const br=Object.values(MATH_DATA).find(b=>b.units.find(x=>x.id===id));
+  const dr=document.getElementById('math-detail-drawer');
+  if(dr.dataset.open===id){dr.classList.remove('open');dr.dataset.open='';return;}
+  dr.dataset.open=id;
+  const pc=u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80';
+  dr.innerHTML=`
+    <div class="dd-top"><div class="dd-title" style="color:${br.color}">${u.name}</div><button class="dd-close" onclick="document.getElementById('math-detail-drawer').classList.remove('open');this.closest('.detail-drawer').dataset.open=''">✕</button></div>
+    <div class="dd-meta">
+      <div class="dd-card"><div class="dd-cl">Weightage</div><div class="dd-cv" style="color:${br.color}">${u.pct}%</div></div>
+      <div class="dd-card"><div class="dd-cl">Priority</div><div class="dd-cv" style="color:${pc}">${u.priority.toUpperCase()}</div></div>
+      <div class="dd-card"><div class="dd-cl">Depth</div><div class="dd-cv">${u.depth}</div></div>
+      <div class="dd-card"><div class="dd-cl">Stars</div><div class="dd-cv" style="color:var(--gold)">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
+    </div>
+    ${u.note?`<div class="dd-note">${u.note}</div>`:''}
+    <div class="dd-topics-l">Key Subtopics</div>
+    ${u.subtopics.map(t=>`<span class="dd-tag">${t}</span>`).join('')}
+    <div class="dd-formula-l">Important Formulas</div>
+    ${u.formulas.map(f=>`<span class="dd-ftag">${f}</span>`).join('')}
+  `;
+  dr.classList.add('open');
+}
+
+function buildMathCharts(){
+  mathChartsBuilt=true;
+  mathDonutChart=new Chart(document.getElementById('mathDonut').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['Calculus 38%','Algebra 32%','Coord. Geo. 22%','Vec/3D/Prob 12%'],
+    datasets:[{data:[38,32,22,12],backgroundColor:['#22d3ee','#a78bfa','#ff6b35','#fbbf24'],borderColor:'#05050f',borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  buildMathBar();renderMathUnits();
+}
+
+function buildMathBar(){
+  const br=MATH_DATA[curMathBranch];
+  if(mathBarChart)mathBarChart.destroy();
+  mathBarChart=new Chart(document.getElementById('mathBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:br.units.map(u=>u.name),
+    datasets:[{data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#ff6b35':u.priority==='mid'?'#fbbf24':'#4ade80'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5c5a75',callback:v=>v+'%'},border:{display:false}},
+        y:{grid:{display:false},ticks:{color:'#9d9bb8'},border:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}}}
+  });
+}
+
+function showMathSection(id,el){
+  document.querySelectorAll('#math-sidebar .sb-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#math-main .section-block').forEach(s=>s.classList.remove('active'));
+  document.getElementById('ms-overview').classList.add('active');
+  if(id!=='overview'){
+    const allU=Object.values(MATH_DATA).flatMap(b=>b.units);
+    const u=allU.find(x=>x.id===id);
+    if(u){
+      const brKey=Object.keys(MATH_DATA).find(k=>MATH_DATA[k].units.find(x=>x.id===id));
+      if(brKey!==curMathBranch){
+        curMathBranch=brKey;
+        document.querySelectorAll('#math-branch-cards .bc-mini').forEach((c,i)=>{
+          c.classList.remove('active');if(Object.keys(MATH_DATA)[i]===brKey)c.classList.add('active');
+        });
+        renderMathUnits();if(mathBarChart){mathBarChart.destroy();mathBarChart=null;}buildMathBar();
+      }
+      setTimeout(()=>showMathUnitDetail(id),100);
     }
   }
 }
