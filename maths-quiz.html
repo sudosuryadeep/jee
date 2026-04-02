@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📐 MATH·SYNTH | Advanced Calculus & Algebra | Minimalist Futuristic Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:opsz,wght@14..32,300;14..32,500;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-void: #05070f;
+      --glass-dark: rgba(15, 25, 45, 0.65);
+      --border-tech: rgba(0, 230, 200, 0.35);
+      --neon-silver: #e2f0ff;
+      --neon-ember: #ffbc6e;
+      --quantum-blue: #2b9aff;
+      --plasma-magenta: #d16aff;
+      --txt-bright: #f0f4ff;
+      --txt-fade: #7e8bb6;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 30% 10%, #0a0f1f, #01030a);
+      color: var(--txt-bright);
+      min-height: 100vh;
+    }
+
+    /* geometric overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.05"><path fill="none" stroke="%232b9aff" stroke-width="0.8" d="M100,200 L300,100 L500,250 L400,450 L150,400 Z M650,600 L850,500 L950,700 L750,850 Z M400,700 L550,650 L600,800 L450,850 Z"/><circle cx="800" cy="200" r="40" stroke="%23ffbc6e" fill="none"/></svg>');
+      background-repeat: repeat;
+      pointer-events: none;
+    }
+
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 2;
+      animation: slideGlow 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .screen.active { display: block; }
+    @keyframes slideGlow {
+      0% { opacity: 0; transform: translateY(14px); filter: blur(2px);}
+      100% { opacity: 1; transform: translateY(0); filter: blur(0);}
+    }
+
+    /* glass minimal */
+    .glass-panel {
+      background: var(--glass-dark);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-tech);
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,230,200,0.1);
+      transition: all 0.2s;
+    }
+
+    .btn {
+      font-family: 'Space Grotesk', monospace;
+      font-weight: 600;
+      padding: 0.7rem 1.8rem;
+      border-radius: 3rem;
+      cursor: pointer;
+      transition: 0.2s;
+      border: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary {
+      background: linear-gradient(115deg, var(--quantum-blue), var(--plasma-magenta));
+      color: #01030f;
+      box-shadow: 0 0 12px rgba(43, 154, 255, 0.5);
+    }
+    .btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(209, 106, 255, 0.6);}
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(43, 154, 255, 0.5);
+      color: var(--quantum-blue);
+    }
+    .btn-secondary:hover { background: rgba(43, 154, 255, 0.15);}
+    .btn-submit { background: linear-gradient(125deg, #ffbc6e, #f0725c); color: #000;}
+
+    .opt-btn {
+      width: 100%;
+      background: rgba(8, 15, 30, 0.7);
+      border: 1px solid rgba(43, 154, 255, 0.3);
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      margin-bottom: 0.7rem;
+      text-align: left;
+      color: var(--txt-bright);
+      font-weight: 500;
+      transition: 0.2s;
+      cursor: pointer;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .opt-btn:hover { background: rgba(43, 154, 255, 0.1); border-color: var(--quantum-blue); transform: translateX(6px);}
+    .opt-btn.sel {
+      background: linear-gradient(120deg, rgba(43,154,255,0.2), rgba(209,106,255,0.15));
+      border-color: var(--plasma-magenta);
+      box-shadow: 0 0 12px rgba(209,106,255,0.3);
+    }
+    .opt-letter {
+      width: 30px; height: 30px; border-radius: 30px;
+      background: rgba(43,154,255,0.2);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800;
+    }
+    .timer-pill {
+      font-family: 'Space Grotesk';
+      background: #0a0f1fcc;
+      border: 1px solid var(--quantum-blue);
+      border-radius: 40px;
+      padding: 0.3rem 1.2rem;
+    }
+    .q-dot {
+      width: 38px; height: 38px; border-radius: 14px;
+      background: #0f172f;
+      border: 1px solid #2a3f7a;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.08s linear;
+    }
+    .q-dot.cur { background: linear-gradient(145deg, var(--quantum-blue), var(--plasma-magenta)); color: #000; box-shadow: 0 0 10px #2b9aff; transform: scale(1.02);}
+    .q-dot.ans-dot { background: rgba(43,154,255,0.25); border-color: #2b9aff; color: #8ecaff;}
+    .q-dot.skp-dot { background: rgba(255,188,110,0.25); border-color: #ffbc6e; color: #ffbc6e;}
+
+    .score-circle {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--quantum-blue), var(--plasma-magenta));
+      display: flex; align-items: center; justify-content: center; margin: 0 auto;
+      box-shadow: 0 0 35px rgba(43,154,255,0.4);
+    }
+    .rev-item {
+      border-left: 5px solid transparent;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+      border-radius: 1.2rem; margin-bottom: 1rem; padding: 1rem;
+    }
+    .rev-item.correct { border-left-color: #2effb0; }
+    .rev-item.wrong { border-left-color: #ff5a7c; }
+    .rev-item.skipped { border-left-color: #ffbc6e; }
+    h1, h2, h3 { font-family: 'Space Grotesk', monospace; font-weight: 600; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body>
+
+<!-- START SCREEN – minimal synthwave -->
+<div id="start-screen" class="screen active">
+  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem;">
+    <div class="glass-panel" style="max-width: 700px; width:100%; padding:2.5rem; text-align:center;">
+      <div style="font-size:4rem;">∫📐</div>
+      <h1 style="font-size:2.2rem; background:linear-gradient(125deg, #2b9aff, #ffbc6e, #d16aff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">MATH·SYNTHESIS</h1>
+      <p style="color:var(--txt-fade); margin:1rem 0;">Differential Equations | Definite Integration | Algebra | Probability | 25 high-level problems</p>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:2rem 0;">
+        <div class="glass-panel" style="padding:0.8rem;"><div>⚡</div><div style="font-weight:800;">25</div><div>Questions</div></div>
+        <div class="glass-panel" style="padding:0.8rem;"><div>⏲️</div><div style="font-weight:800;">45 min</div><div>Timer</div></div>
+        <div class="glass-panel" style="padding:0.8rem;"><div>🎓</div><div style="font-weight:800;">Adv. + PYQ</div><div>Level</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()" style="width:100%; padding:1rem;">⟳ INITIALIZE SEQUENCE</button>
+      <p style="font-size:0.7rem; margin-top:1rem;">📐 Calculus · Vectors · Combinatorics · Complex Numbers</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen" class="screen">
+  <div style="max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem;">
+    <div class="glass-panel" style="display:flex; justify-content:space-between; padding:0.9rem 1.8rem; margin-bottom:1.2rem;">
+      <span style="font-weight:600;">📐 Q<span id="qCur">1</span>/<span id="qTot">25</span></span>
+      <div class="timer-pill" id="timerEl">⏱ 45:00</div>
+    </div>
+    <div class="glass-panel" id="questionCard" style="padding:2rem; margin-bottom:1.2rem;">
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; margin-bottom:1.2rem;">
+        <span class="glass-panel" style="padding:0.2rem 1rem; border-radius:30px;" id="qTopic">Topic</span>
+        <span id="qYear" style="color:var(--quantum-blue);">2024</span>
+        <span id="qStatus" style="margin-left:auto;">◉ New</span>
+      </div>
+      <div id="qText" style="font-size:1.05rem; line-height:1.55; margin-bottom:2rem;"></div>
+      <div id="optsGrid"></div>
+      <div style="display:flex; justify-content:space-between; margin-top:2rem; flex-wrap:wrap; gap:1rem;">
+        <div><button class="btn btn-secondary" id="btnPrev" onclick="nav(-1)">◀ PREV</button><button class="btn btn-secondary" style="margin-left:0.7rem;" onclick="skipCur()">⤭ SKIP</button></div>
+        <div><button class="btn btn-primary" id="btnNext" onclick="nav(1)">NEXT ▶</button><button class="btn btn-submit" id="btnSubmit" style="display:none;" onclick="showSubmitModal()">📊 SUBMIT</button></div>
+      </div>
+    </div>
+    <div id="qMap" style="display:flex; flex-wrap:wrap; gap:0.6rem; justify-content:center; margin-top:1rem;"></div>
+  </div>
+</div>
+
+<!-- RESULTS & ANALYSIS -->
+<div id="results-screen" class="screen">
+  <div style="max-width: 1100px; margin: 2rem auto; padding:1rem;">
+    <div class="glass-panel" style="padding:2rem; text-align:center;">
+      <h2 id="resTitle">📈 PERFORMANCE MATRIX</h2>
+      <div class="score-circle" style="margin:1.5rem auto;"><div><span id="scoreNum" style="font-size:2.8rem; font-weight:800;">0</span><span>/25</span></div></div>
+      <div><span id="gradeBadge" class="glass-panel" style="padding:0.3rem 1.2rem;">—</span></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:1rem; margin:2rem 0;">
+        <div class="glass-panel" style="padding:1rem;"><div>✅ Correct</div><div id="stCorrect" style="font-size:2rem; color:#2effb0;">0</div></div>
+        <div class="glass-panel" style="padding:1rem;"><div>❌ Wrong</div><div id="stWrong" style="font-size:2rem; color:#ff5a7c;">0</div></div>
+        <div class="glass-panel" style="padding:1rem;"><div>⤭ Skipped</div><div id="stSkipped" style="font-size:2rem;">0</div></div>
+        <div class="glass-panel" style="padding:1rem;"><div>🎯 Accuracy</div><div id="stAcc">0%</div></div>
+      </div>
+      <div class="glass-panel" style="padding:1.5rem; margin-bottom:1.5rem; text-align:left;">
+        <h3 style="display:flex; gap:0.5rem;">📐 INTELLIGENT INSIGHTS (Weak area mapping)</h3>
+        <div id="insightsList"></div>
+      </div>
+      <div style="display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem;">
+        <button class="btn btn-secondary" onclick="filterReview('all')">All 25</button>
+        <button class="btn btn-secondary" onclick="filterReview('correct')">✅ Correct</button>
+        <button class="btn btn-secondary" onclick="filterReview('wrong')">❌ Wrong</button>
+        <button class="btn btn-secondary" onclick="filterReview('skipped')">⤭ Skipped</button>
+      </div>
+      <div id="reviewList"></div>
+      <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
+        <button class="btn btn-primary" onclick="restartQuiz()">⟳ RESTART</button>
+        <button class="btn btn-secondary" onclick="downloadMathReport()">📄 PDF REPORT (Stylized)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="submitModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); z-index:999; align-items:center; justify-content:center;">
+  <div class="glass-panel" style="max-width:400px; padding:2rem; text-align:center;">
+    <h3>📌 Finalize Analysis</h3>
+    <p id="modalSummary"></p>
+    <button class="btn btn-submit" onclick="submitQuiz()">Confirm</button>
+    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+  // 25 ADVANCED MATHEMATICS QUESTIONS (Based on given reference: DE, Integration, Permutation, Limit, Vectors etc)
+  const questions = [
+    { text: "If y = f(x) solves (1+sin x)dy/dx + cos x = 0, f(0)=0, then f(π/2) = ?", opts: ["ln2", "-ln2", "ln3", "ln4"], ans: 1, topic: "Diff. Equation", yr: "2023" },
+    { text: "∫₀³ (eˣ + e⁻ˣ)/[x]! dx ([.] GIF) equals?", opts: ["(e³−e⁻³−e²+e⁻²)/2", "(e³−e²+e⁻²−e⁻³)/2", "e³−e⁻³−e²+e⁻²", "none"], ans: 0, topic: "Definite Integration", yr: "2024" },
+    { text: "Number of 7-digit numbers using digits 1,2,3,4,5 with at least one digit repeated?", opts: ["16200","15600","16800","14800"], ans: 2, topic: "Permutations", yr: "2024" },
+    { text: "Range of f(x) = sin⁻¹(1/(x²-2x+2)) is:", opts: ["(0,π/2]","(0,π/2)","[0,π/2]","[0,π/2)"], ans: 0, topic: "Inverse Trig", yr: "2023" },
+    { text: "Let S = {x∈[-π,π] : sinx(sinx+cosx)=a, a∈Z}. Number of elements in S?", opts: ["5","10","9","4"], ans: 2, topic: "Trigonometry", yr: "2024" },
+    { text: "A circle meets axes at 3 points & cuts equal intercepts. If chord length √14 on x+y=1, then R² = ?", opts: ["2","4","8","16"], ans: 2, topic: "Circle", yr: "2023" },
+    { text: "|a|=2,|b|=3, max value of 3|3a+2b|+4|3a-2b| is?", opts: ["50","60","70","80"], ans: 1, topic: "Vectors", yr: "2024" },
+    { text: "Probability that ax²+2√2bx+c>0 ∀x∈R, a,b,c∈{1,2,3,4} is m/n (coprime). m+n = ?", opts: ["81","18","78","17"], ans: 0, topic: "Probability", yr: "2024" },
+    { text: "Critical points of f(x)= sin x / x (x≠0), f(0)=1 in (-2π,2π) count?", opts: ["3","5","7","1"], ans: 0, topic: "Calculus", yr: "2023" },
+    { text: "Ellipse x²/a²+y²/b²=1 passes (3,4), e=√5/3, latus rectum length?", opts: ["4√5/3","8√5/3","4√7/3","8√7/3"], ans: 1, topic: "Ellipse", yr: "2024" },
+    { text: "Foot from origin to line through (1,1,1) with dr <2,3,4> is:", opts: ["(11/29, -2/29, 7/29)","(11/29,2/29,7/29)","(11/29,-2/29,-7/29)","(-11/29,2/29,7/29)"], ans: 0, topic: "3D Geometry", yr: "2023" },
+    { text: "α, α+2 ∈ Z are roots of Σ_{k=0}^{n-1} (x+k)(x+k+2)=4n, then α+n = ?", opts: ["0","1","2","3"], ans: 2, topic: "Quadratic", yr: "2024" },
+    { text: "K = sin(π/18) sin(5π/18) sin(7π/18), then sin(10Kπ/3) = ?", opts: ["(√3-1)/(2√2)","(√3+1)/(2√2)","(√3+1)/4","(√3-1)/4"], ans: 1, topic: "Trigonometry", yr: "2023" },
+    { text: "I = ∫₀² log₂(x²+4)dx + 2∫₂⁴√(4−|x-2|)dx = ?", opts: ["2√3","4√3","6√3","8√3"], ans: 3, topic: "Integration", yr: "2024" },
+    { text: "If Σ_{k=1}^n a_k = 6n³, then Σ_{k=1}^6 (a_{k+1} - a_k)²/36 = ?", opts: ["85","91","100","78"], ans: 1, topic: "Sequences", yr: "2024" },
+    { text: "Limit (x→2) [ eˣ sin(x³-5x²+ax+b) ] / [ (√(x-1)-1) log₂(x-1) ] = m (finite). Find a+b+m.", opts: ["4","5","6","7"], ans: 2, topic: "Limits", yr: "2023" },
+    { text: "Line through (1,1,1) ⟂ to i+2j+2k and 2i+2j+k. Foot from origin (a,b,c) then 34(a+b+c)=?", opts: ["100","108","96","112"], ans: 0, topic: "3D", yr: "2024" },
+    { text: "If 36C_{r+1} = 6·35C_{r}/(k²-3), number of ordered pairs (r,k) ∈ Z is:", opts: ["2","4","6","8"], ans: 1, topic: "Binomial", yr: "2023" },
+    { text: "Midpoints of triangle sides: (5/2,3), (5,7), (4,5). Incentre (h,k) then 3h+k = ?", opts: ["11","13","15","17"], ans: 1, topic: "Coordinate", yr: "2024" },
+    { text: "Domain of log_{0.6}((2x-5)/(x²-4)) is (−∞,a)∪{b}∪(c,d)∪(e,∞) then a+b+c+d+e = ?", opts: ["2","4","6","8"], ans: 1, topic: "Inequalities", yr: "2024" },
+    { text: "Two APs: S1: 1,6,... 101 terms ; S2: 9,16,... 71 terms. Number of common terms?", opts: ["12","14","16","18"], ans: 1, topic: "Arithmetic Progression", yr: "2023" },
+    { text: "If (2x+y)/(1+3i) + (50+31i)/(1-2i) = 17i, then 10(x+3y) = ?", opts: ["25","50","75","100"], ans: 2, topic: "Complex Numbers", yr: "2024" },
+    { text: "If the eccentricity of hyperbola x²/9 - y²/16 =1 is e₁ and ellipse x²/25+y²/9=1 is e₂, then e₁²+e₂² = ?", opts: ["2","3","4","5"], ans: 2, topic: "Conics", yr: "2023" },
+    { text: "Number of solutions of |x-1| + |x-2| = 3 in real numbers is:", opts: ["0","1","2","Infinite"], ans: 2, topic: "Functions", yr: "2024" },
+    { text: "If z is complex number satisfying |z-2i| = 2, then maximum of |z-4| is:", opts: ["2√5","6","8","10"], ans: 1, topic: "Complex Numbers", yr: "2023" }
+  ];
+
+  let state = { cur: 0, answers: Array(25).fill(null), skipped: Array(25).fill(false), timeLeft: 45 * 60, submitted: false, timerInt: null };
+
+  function startQuiz() { showScreen('quiz-screen'); buildMap(); renderQ(); startTimer(); }
+  function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+  function startTimer() { if (state.timerInt) clearInterval(state.timerInt); updateTimer(); state.timerInt = setInterval(() => { if (!state.submitted) { state.timeLeft--; updateTimer(); if (state.timeLeft <= 0) { clearInterval(state.timerInt); alert('Time limit reached. Submitting...'); submitQuiz(); } } }, 1000); }
+  function updateTimer() { let m = Math.floor(state.timeLeft / 60), s = state.timeLeft % 60; document.getElementById('timerEl').innerHTML = `⏱ ${m}:${s < 10 ? '0' + s : s}`; if (state.timeLeft <= 120) document.getElementById('timerEl').style.background = '#ff5a7c40'; }
+  function renderQ() {
+    let i = state.cur, q = questions[i];
+    document.getElementById('qCur').innerText = i + 1;
+    document.getElementById('qTot').innerText = questions.length;
+    document.getElementById('qTopic').innerText = q.topic;
+    document.getElementById('qYear').innerText = q.yr;
+    document.getElementById('qText').innerHTML = q.text;
+    let status = state.skipped[i] ? "⤭ Skipped" : (state.answers[i] !== null ? "✓ Answered" : "◉ Unanswered");
+    document.getElementById('qStatus').innerHTML = status;
+    let optsDiv = document.getElementById('optsGrid');
+    optsDiv.innerHTML = '';
+    q.opts.forEach((opt, idx) => {
+      let btn = document.createElement('button');
+      btn.className = 'opt-btn' + (state.answers[i] === idx ? ' sel' : '');
+      btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65 + idx)}</span><span>${opt}</span>`;
+      btn.onclick = () => { if (!state.submitted) { state.answers[i] = idx; state.skipped[i] = false; renderQ(); saveState(); } };
+      optsDiv.appendChild(btn);
+    });
+    document.getElementById('btnPrev').disabled = (i === 0);
+    let last = (i === questions.length - 1);
+    document.getElementById('btnNext').style.display = last ? 'none' : 'block';
+    document.getElementById('btnSubmit').style.display = last ? 'block' : 'none';
+    updateMap();
+  }
+  function nav(d) { let n = state.cur + d; if (n >= 0 && n < questions.length) { state.cur = n; renderQ(); } }
+  function skipCur() { if (!state.submitted) { state.skipped[state.cur] = true; state.answers[state.cur] = null; renderQ(); if (state.cur < questions.length - 1) nav(1); saveState(); } }
+  function buildMap() { let mapDiv = document.getElementById('qMap'); mapDiv.innerHTML = ''; questions.forEach((_, i) => { let dot = document.createElement('button'); dot.className = 'q-dot'; dot.innerText = i + 1; dot.onclick = () => { state.cur = i; renderQ(); }; mapDiv.appendChild(dot); }); }
+  function updateMap() { questions.forEach((_, i) => { let dot = document.getElementById('qMap')?.children[i]; if (dot) { dot.classList.remove('cur', 'ans-dot', 'skp-dot'); if (i === state.cur) dot.classList.add('cur'); else if (state.skipped[i]) dot.classList.add('skp-dot'); else if (state.answers[i] !== null) dot.classList.add('ans-dot'); } }); }
+  function saveState() { localStorage.setItem('math_quiz_adv', JSON.stringify({ cur: state.cur, answers: state.answers, skipped: state.skipped, timeLeft: state.timeLeft, submitted: state.submitted })); }
+  function showSubmitModal() { let ans = state.answers.filter(a => a !== null).length, skip = state.skipped.filter(Boolean).length, una = 25 - ans - skip; document.getElementById('modalSummary').innerHTML = `📊 Attempted: ${ans} | Skipped: ${skip} | Unanswered: ${una}<br>Submit for final analysis.`; document.getElementById('submitModal').style.display = 'flex'; }
+  function closeModal() { document.getElementById('submitModal').style.display = 'none'; }
+  function submitQuiz() {
+    closeModal(); clearInterval(state.timerInt); state.submitted = true;
+    let correct = 0, wrong = 0, skipped = 0;
+    questions.forEach((q, i) => {
+      if (state.skipped[i] || state.answers[i] === null) skipped++;
+      else if (state.answers[i] === q.ans) correct++;
+      else wrong++;
+    });
+    let pct = Math.round(correct / 25 * 100);
+    let acc = (correct + wrong) > 0 ? Math.round(correct / (correct + wrong) * 100) : 0;
+    document.getElementById('scoreNum').innerText = correct;
+    document.getElementById('stCorrect').innerText = correct;
+    document.getElementById('stWrong').innerText = wrong;
+    document.getElementById('stSkipped').innerText = skipped;
+    document.getElementById('stAcc').innerText = acc + '%';
+    let grade = pct >= 85 ? '🏆 Math Grandmaster' : pct >= 65 ? '📐 Analyst Pro' : '📘 Focused Revision Needed';
+    document.getElementById('gradeBadge').innerText = grade;
+    let weakTopics = [...new Set(questions.filter((_, i) => state.answers[i] !== null && state.answers[i] !== questions[i].ans).map((_, i) => questions[i].topic))];
+    let insightMsg = `🎯 Score: ${pct}% | Accuracy: ${acc}%. `;
+    if (weakTopics.length) insightMsg += `⚠️ Key weak areas: ${weakTopics.slice(0, 4).join(', ')}. Focus on Calculus & Coordinate.`;
+    else insightMsg += '✨ Exceptional command on advanced topics!';
+    document.getElementById('insightsList').innerHTML = `<div style="padding:0.4rem;">${insightMsg}</div>`;
+    filterReview('all');
+    showScreen('results-screen');
+    localStorage.removeItem('math_quiz_adv');
+  }
+  function filterReview(type) {
+    let html = '';
+    questions.forEach((q, i) => {
+      let ua = state.answers[i];
+      let isSkp = state.skipped[i] || ua === null;
+      let isCorr = !isSkp && ua === q.ans;
+      if (type === 'correct' && !isCorr) return;
+      if (type === 'wrong' && (isCorr || isSkp)) return;
+      if (type === 'skipped' && !isSkp) return;
+      let cls = isCorr ? 'correct' : isSkp ? 'skipped' : 'wrong';
+      let statusText = isCorr ? '✔ Correct' : isSkp ? '⤭ Skipped' : '✘ Wrong';
+      html += `<div class="rev-item ${cls}"><strong>Q${i+1} [${q.topic}]</strong> <span style="color:#aaa">${statusText}</span><br>${q.text}<br>📐 Your: ${isSkp ? '—' : q.opts[ua]} &nbsp; | ✅ Correct: ${q.opts[q.ans]}</div>`;
+    });
+    document.getElementById('reviewList').innerHTML = html || '<p>No entries.</p>';
+  }
+  function restartQuiz() { if (confirm('Restart will erase all progress.')) { clearInterval(state.timerInt); localStorage.removeItem('math_quiz_adv'); state = { cur: 0, answers: Array(25).fill(null), skipped: Array(25).fill(false), timeLeft: 45 * 60, submitted: false, timerInt: null }; showScreen('start-screen'); } }
+  function downloadMathReport() { let content = document.getElementById('results-screen').cloneNode(true); let win = window.open(); win.document.write(`<html><head><title>Math_Advanced_Report</title><style>body{font-family:sans-serif;background:#fff;color:#000;} .glass-panel{border:1px solid #ccc;padding:1rem;margin:1rem;}</style></head><body>${content.innerHTML}</body></html>`); win.document.close(); win.print(); }
+  window.startQuiz = startQuiz; window.nav = nav; window.skipCur = skipCur; window.showSubmitModal = showSubmitModal; window.closeModal = closeModal; window.submitQuiz = submitQuiz; window.filterReview = filterReview; window.restartQuiz = restartQuiz; window.downloadMathReport = downloadMathReport;
+</script>
+</body>
+</html>
