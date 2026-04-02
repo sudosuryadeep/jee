@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JEE Physics Syllabus Analyzer</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg-primary:#ffffff;--bg-secondary:#f5f5f4;--bg-tertiary:#eeede8;
+    --text-primary:#1a1a18;--text-secondary:#5f5e5a;--text-tertiary:#888780;
+    --border-light:rgba(0,0,0,0.1);--border-mid:rgba(0,0,0,0.18);
+    --radius-md:8px;--radius-lg:12px;
+    --font:'Segoe UI',system-ui,sans-serif;--font-mono:'Fira Code','Consolas',monospace;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg-primary:#1c1c1a;--bg-secondary:#252523;--bg-tertiary:#2e2e2b;
+      --text-primary:#f0ede8;--text-secondary:#a8a7a2;--text-tertiary:#6e6d69;
+      --border-light:rgba(255,255,255,0.08);--border-mid:rgba(255,255,255,0.15);
+    }
+  }
+  body{font-family:var(--font);background:var(--bg-tertiary);color:var(--text-primary);min-height:100vh;padding:2rem 1rem}
+  .root{max-width:920px;margin:0 auto}
+
+  .topbar{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2rem;border-bottom:.5px solid var(--border-light);padding-bottom:1rem}
+  .topbar h1{font-size:22px;font-weight:500;letter-spacing:-.5px}
+  .topbar span{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:2px}
+
+  .kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1.5rem}
+  @media(max-width:500px){.kpi{grid-template-columns:repeat(2,1fr)}}
+  .kpi-box{background:var(--bg-secondary);border-radius:var(--radius-md);padding:12px;text-align:center}
+  .kpi-v{font-size:20px;font-weight:500}
+  .kpi-l{font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+
+  .branches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+  @media(max-width:650px){.branches{grid-template-columns:repeat(2,1fr)}}
+  .bc{background:var(--bg-secondary);border-radius:var(--radius-lg);padding:1rem 1.1rem;cursor:pointer;border:1.5px solid transparent;transition:border-color .2s}
+  .bc.active{border-color:var(--ac,#7F77DD)}
+  .bc-num{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.3rem}
+  .bc-pct{font-size:26px;font-weight:500;line-height:1}
+  .bc-name{font-size:12px;color:var(--text-secondary);margin-top:3px}
+  .bc-bar{height:2px;border-radius:2px;margin-top:8px;background:var(--border-light)}
+  .bc-fill{height:2px;border-radius:2px}
+
+  .dp{background:var(--bg-secondary);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;display:none}
+  .dp.on{display:block}
+  .dp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .dp-title{font-size:16px;font-weight:500}
+  .dp-x{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-secondary)}
+  .dp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+  .dp-card{background:var(--bg-primary);border:.5px solid var(--border-light);border-radius:var(--radius-md);padding:10px}
+  .dc-l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary)}
+  .dc-v{font-size:14px;font-weight:500;margin-top:4px}
+  .dp-topics{margin-top:1rem}
+  .dp-tl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary);margin-bottom:6px}
+  .dp-tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:100px;background:var(--bg-primary);border:.5px solid var(--border-mid);color:var(--text-secondary);margin:3px 3px 3px 0}
+
+  .mid{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  @media(max-width:650px){.mid{grid-template-columns:1fr}}
+  .panel{background:var(--bg-primary);border:.5px solid var(--border-light);border-radius:var(--radius-lg);padding:1.25rem}
+  .ptitle{font-size:11px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem}
+
+  .urow{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:.5px solid var(--border-light);cursor:pointer;transition:opacity .15s}
+  .urow:hover{opacity:.7}
+  .urow:last-child{border-bottom:none}
+  .udot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .uname{flex:1;font-size:13px}
+  .upct{font-size:12px;color:var(--text-secondary);white-space:nowrap}
+  .ustars{font-size:10px;color:#EF9F27}
+  .ubar-w{width:56px;height:2px;border-radius:2px;background:var(--border-light)}
+  .ubar{height:2px;border-radius:2px}
+
+  .ptiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .tier{border-radius:var(--radius-md);padding:10px 12px}
+  .tier .tl{font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:6px}
+  .tier .ti{font-size:12px;line-height:1.85}
+  .t-top{background:#FAECE7}.t-top .tl{color:#993C1D}.t-top .ti{color:#712B13}
+  .t-mid{background:#FAEEDA}.t-mid .tl{color:#854F0B}.t-mid .ti{color:#633806}
+  .t-low{background:#EAF3DE}.t-low .tl{color:#3B6D11}.t-low .ti{color:#27500A}
+  @media(prefers-color-scheme:dark){
+    .t-top{background:#4A1B0C}.t-top .tl{color:#F0997B}.t-top .ti{color:#F5C4B3}
+    .t-mid{background:#412402}.t-mid .tl{color:#EF9F27}.t-mid .ti{color:#FAC775}
+    .t-low{background:#173404}.t-low .tl{color:#639922}.t-low .ti{color:#97C459}
+  }
+
+  .bot{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  @media(max-width:650px){.bot{grid-template-columns:1fr}}
+  .cw{position:relative;width:100%;height:210px}
+
+  .links{display:flex;flex-direction:column;gap:7px}
+  .link-row{background:var(--bg-secondary);border-radius:var(--radius-md);padding:8px 12px;display:flex;align-items:center;gap:10px}
+  .link-a{font-size:12px;color:var(--text-secondary);flex:1;text-align:right}
+  .link-op{font-size:13px;font-weight:500;color:var(--text-primary);text-align:center;min-width:20px}
+  .link-b{font-size:12px;color:var(--text-secondary);flex:1}
+  .link-tag{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg-primary);border:.5px solid var(--border-mid);color:var(--text-tertiary);white-space:nowrap}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  @media(max-width:650px){.grid2{grid-template-columns:1fr}}
+
+  .depth-table{width:100%;border-collapse:collapse;font-size:13px}
+  .depth-table th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-tertiary);font-weight:500;text-align:left;padding:6px 8px;border-bottom:.5px solid var(--border-light)}
+  .depth-table td{padding:7px 8px;border-bottom:.5px solid var(--border-light);color:var(--text-secondary)}
+  .depth-table tr:last-child td{border-bottom:none}
+  .pill-h{background:#FAECE7;color:#993C1D;padding:2px 8px;border-radius:4px;font-size:11px}
+  .pill-m{background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:4px;font-size:11px}
+  .pill-l{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px}
+  @media(prefers-color-scheme:dark){
+    .pill-h{background:#4A1B0C;color:#F0997B}
+    .pill-m{background:#412402;color:#EF9F27}
+    .pill-l{background:#173404;color:#639922}
+  }
+
+  .truth-box{background:var(--bg-secondary);border-radius:var(--radius-lg);padding:1.25rem;border-left:3px solid #D85A30}
+  .truth-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#D85A30;margin-bottom:.6rem;font-weight:500}
+  .truth-items{display:flex;flex-direction:column;gap:6px}
+  .truth-item{font-size:13px;color:var(--text-secondary);display:flex;gap:8px;align-items:flex-start}
+  .truth-item::before{content:"→";color:#D85A30;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="root">
+
+  <div class="topbar">
+    <h1>JEE Physics — Syllabus Analysis</h1>
+    <span>16 Units · 4 Systems</span>
+  </div>
+
+  <div class="kpi">
+    <div class="kpi-box"><div class="kpi-v">4</div><div class="kpi-l">Root Systems</div></div>
+    <div class="kpi-box"><div class="kpi-v">5</div><div class="kpi-l">Star Units</div></div>
+    <div class="kpi-box"><div class="kpi-v">75%</div><div class="kpi-l">Mech + Electro</div></div>
+    <div class="kpi-box"><div class="kpi-v">40–45%</div><div class="kpi-l">Mechanics Wt.</div></div>
+  </div>
+
+  <div class="branches" id="branchCards">
+    <div class="bc active" style="--ac:#D85A30" onclick="setBranch('mech',this)">
+      <div class="bc-num">System 01</div>
+      <div class="bc-pct">42%</div>
+      <div class="bc-name">Mechanics</div>
+      <div class="bc-bar"><div class="bc-fill" style="width:95%;background:#D85A30"></div></div>
+    </div>
+    <div class="bc" style="--ac:#1D9E75" onclick="setBranch('thermo',this)">
+      <div class="bc-num">System 02</div>
+      <div class="bc-pct">11%</div>
+      <div class="bc-name">Thermo + KT</div>
+      <div class="bc-bar"><div class="bc-fill" style="width:25%;background:#1D9E75"></div></div>
+    </div>
+    <div class="bc" style="--ac:#7F77DD" onclick="setBranch('electro',this)">
+      <div class="bc-num">System 03</div>
+      <div class="bc-pct">32%</div>
+      <div class="bc-name">Electrodynamics</div>
+      <div class="bc-bar"><div class="bc-fill" style="width:73%;background:#7F77DD"></div></div>
+    </div>
+    <div class="bc" style="--ac:#5DCAA5" onclick="setBranch('modern',this)">
+      <div class="bc-num">System 04</div>
+      <div class="bc-pct">17%</div>
+      <div class="bc-name">Modern + Optics</div>
+      <div class="bc-bar"><div class="bc-fill" style="width:38%;background:#5DCAA5"></div></div>
+    </div>
+  </div>
+
+  <div id="dp" class="dp">
+    <div class="dp-hd">
+      <div class="dp-title" id="dpTitle">Detail</div>
+      <button class="dp-x" onclick="document.getElementById('dp').classList.remove('on')">✕</button>
+    </div>
+    <div class="dp-grid" id="dpGrid"></div>
+    <div class="dp-topics" id="dpTopics"></div>
+  </div>
+
+  <div class="mid">
+    <div class="panel">
+      <div class="ptitle" id="unitsTitle">Mechanics — Units</div>
+      <div id="unitsList"></div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Priority Tiers</div>
+      <div class="ptiers">
+        <div class="tier t-top">
+          <div class="tl">Top</div>
+          <div class="ti">Rotation<br>Electrostatics<br>Current Elec.<br>EMI + AC<br>Optics</div>
+        </div>
+        <div class="tier t-mid">
+          <div class="tl">Mid</div>
+          <div class="ti">Laws of Motion<br>WEP<br>Thermo<br>Magnetism</div>
+        </div>
+        <div class="tier t-low">
+          <div class="tl">Low</div>
+          <div class="ti">KTG<br>Gravitation<br>Modern Physics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bot">
+    <div class="panel">
+      <div class="ptitle">System Weight Distribution</div>
+      <div class="cw"><canvas id="donut"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="ptitle">Chapter Linkages (Toppers Strategy)</div>
+      <div class="links" id="linksList"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:1.5rem">
+    <div class="ptitle" id="barTitle">Unit-wise Weightage</div>
+    <div class="cw" style="height:260px"><canvas id="barChart"></canvas></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="ptitle">Depth Rule Table</div>
+      <table class="depth-table">
+        <thead><tr><th>Type</th><th>Depth Mode</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td>Rotation, Electrostatics</td><td>Multi-concept chain</td><td><span class="pill-h">High</span></td></tr>
+          <tr><td>Newton, WEP, Optics</td><td>Concept + numericals</td><td><span class="pill-m">Medium</span></td></tr>
+          <tr><td>Gravitation, KTG</td><td>Formula + direct</td><td><span class="pill-l">Low</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="truth-box">
+      <div class="truth-title">Hard Truth</div>
+      <div class="truth-items">
+        <div class="truth-item">Mechanics + Electrodynamics = 75% paper power</div>
+        <div class="truth-item">If weak in Rotation → rank drops severely</div>
+        <div class="truth-item">Solve 40–60 problems per chapter minimum</div>
+        <div class="truth-item">Only watching lectures = wasting time</div>
+        <div class="truth-item">JEE Advanced = mixed chapters, not isolated</div>
+        <div class="truth-item">FBD mastery is non-negotiable</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const B = {
+  mech:{label:'Mechanics',color:'#D85A30',units:[
+    {name:'Kinematics',pct:6,stars:0,priority:'mid',depth:'med',subtopics:['1D Motion','2D Motion','Projectile','Relative Velocity','v-t / x-t Graphs'],note:'Foundation only — Graph traps in Advanced'},
+    {name:"Newton's Laws",pct:9,stars:1,priority:'mid',depth:'high',subtopics:['FBD','Friction','Inclined Plane','Pulley + Constraint','Circular Motion'],note:'FBD mastery = non-negotiable'},
+    {name:'Work Energy Power',pct:7,stars:0,priority:'mid',depth:'med',subtopics:['Work-Energy Theorem','Potential Energy','Conservation','Elastic Collisions','Inelastic Collisions'],note:'Mixes with Rotation in Advanced'},
+    {name:'Rotation',pct:11,stars:3,priority:'top',depth:'high',subtopics:['Torque','Angular Momentum','Moment of Inertia','Parallel Axis','Rolling Motion','Rigid Body Dynamics'],note:'Most fail here — Highest depth required'},
+    {name:'Gravitation',pct:4,stars:0,priority:'low',depth:'low',subtopics:["Newton's Law",'Gravitational Potential','Satellite Motion','Escape Velocity'],note:'Easy but scoring'},
+    {name:'Fluid + Solids',pct:5.5,stars:0,priority:'mid',depth:'med',subtopics:['Elasticity','Fluid Pressure',"Bernoulli's Theorem",'Viscosity'],note:'Medium depth, consistent presence'},
+  ]},
+  thermo:{label:'Thermodynamics + KT',color:'#1D9E75',units:[
+    {name:'Thermodynamics',pct:6.5,stars:0,priority:'mid',depth:'med',subtopics:['First Law','Heat & Work','Carnot Cycle','PV Diagrams','Entropy'],note:'Graph-based questions are key'},
+    {name:'Kinetic Theory',pct:4,stars:0,priority:'low',depth:'low',subtopics:['RMS Speed','Degrees of Freedom','Equipartition Theorem','Mean Free Path'],note:'Mostly direct formula questions'},
+  ]},
+  electro:{label:'Electrodynamics',color:'#7F77DD',units:[
+    {name:'Electrostatics',pct:11,stars:1,priority:'top',depth:'high',subtopics:["Coulomb's Law",'Electric Field','Gauss Law','Potential','Capacitors','Continuous Charge'],note:'Field + potential relation is key'},
+    {name:'Current Electricity',pct:7,stars:1,priority:'top',depth:'med',subtopics:["Ohm's Law",'Kirchhoff (KVL/KCL)','Wheatstone Bridge','Power & Heating'],note:'Circuit solving speed matters'},
+    {name:'Magnetism',pct:7,stars:0,priority:'mid',depth:'med',subtopics:['Biot-Savart',"Ampere's Law",'Force on Charge','Force on Current','Magnetic Dipole'],note:'Concept-heavy, consistent weightage'},
+    {name:'EMI + AC',pct:9,stars:1,priority:'top',depth:'high',subtopics:["Faraday's Law",'Lenz Law','Self & Mutual Inductance','LCR Circuit','Resonance','Phase Angle'],note:'Graph + phase = Advanced favourite'},
+  ]},
+  modern:{label:'Modern Physics + Optics',color:'#5DCAA5',units:[
+    {name:'Ray Optics',pct:6,stars:1,priority:'top',depth:'med',subtopics:['Mirror Formula','Lens Formula','Lens Combos','Prism & Dispersion','Total Internal Reflection'],note:'Lens combo is a frequent PYQ trap'},
+    {name:'Wave Optics',pct:5,stars:1,priority:'top',depth:'med',subtopics:['Interference','YDSE','Diffraction','Polarization'],note:'YDSE = most important wave topic'},
+    {name:'Modern Physics',pct:6,stars:0,priority:'low',depth:'low',subtopics:['Photoelectric Effect','Bohr Model','Nuclear Physics','Radioactivity','Semiconductors'],note:"Easy marks — don't skip"},
+  ]}
+};
+
+const LINKS=[
+  {a:'Rotation',op:'⊕',b:'Work Energy Power',tag:'Advanced'},
+  {a:'Electrostatics',op:'⊕',b:'Capacitor Energy',tag:'Combo'},
+  {a:'EMI',op:'⊕',b:'AC Circuits',tag:'Chain'},
+  {a:'Ray Optics',op:'⊕',b:'Wave Optics',tag:'Mixed'},
+  {a:"Newton's Laws",op:'⊕',b:'Rotation',tag:'Core'},
+];
+
+let curBranch='mech', barC;
+
+function setBranch(key,el){
+  curBranch=key;
+  document.querySelectorAll('.bc').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderUnits(); renderBar();
+  document.getElementById('dp').classList.remove('on');
+}
+
+function renderUnits(){
+  const br=B[curBranch];
+  document.getElementById('unitsTitle').textContent=br.label+' — Units';
+  const list=document.getElementById('unitsList');
+  list.innerHTML='';
+  const max=Math.max(...br.units.map(u=>u.pct));
+  br.units.forEach(u=>{
+    const pc=u.priority==='top'?'#D85A30':u.priority==='mid'?'#BA7517':'#639922';
+    const row=document.createElement('div');
+    row.className='urow';
+    row.onclick=()=>showDetail(u,br.color);
+    row.innerHTML=`
+      <div class="udot" style="background:${br.color};opacity:${.45+(u.pct/max)*.55}"></div>
+      <div class="uname">${u.name}</div>
+      ${u.stars?`<div class="ustars">${'★'.repeat(u.stars)}</div>`:''}
+      <div class="ubar-w"><div class="ubar" style="width:${(u.pct/max)*100}%;background:${pc}"></div></div>
+      <div class="upct">${u.pct}%</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function showDetail(u,color){
+  document.getElementById('dpTitle').textContent=u.name;
+  const pc=u.priority==='top'?'#D85A30':u.priority==='mid'?'#BA7517':'#639922';
+  const dl=u.depth==='high'?'High':u.depth==='med'?'Medium':'Low';
+  document.getElementById('dpGrid').innerHTML=`
+    <div class="dp-card"><div class="dc-l">Weightage</div><div class="dc-v" style="color:${color}">${u.pct}%</div></div>
+    <div class="dp-card"><div class="dc-l">Priority</div><div class="dc-v" style="color:${pc}">${u.priority==='top'?'Top':u.priority==='mid'?'Mid':'Low'}</div></div>
+    <div class="dp-card"><div class="dc-l">Depth</div><div class="dc-v">${dl}</div></div>
+    <div class="dp-card"><div class="dc-l">Stars</div><div class="dc-v" style="color:#EF9F27">${u.stars?'★'.repeat(u.stars):'—'}</div></div>
+    <div class="dp-card" style="grid-column:1/-1"><div class="dc-l">Note</div><div class="dc-v" style="font-size:13px;font-weight:400;color:#888">${u.note}</div></div>
+  `;
+  document.getElementById('dpTopics').innerHTML=`<div class="dp-tl">Subtopics</div>`+u.subtopics.map(t=>`<span class="dp-tag">${t}</span>`).join('');
+  document.getElementById('dp').classList.add('on');
+}
+
+function renderLinks(){
+  document.getElementById('linksList').innerHTML=LINKS.map(l=>`
+    <div class="link-row">
+      <div class="link-a">${l.a}</div>
+      <div class="link-op">${l.op}</div>
+      <div class="link-b">${l.b}</div>
+      <div class="link-tag">${l.tag}</div>
+    </div>
+  `).join('');
+}
+
+function renderDonut(){
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  new Chart(document.getElementById('donut').getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels:['Mechanics (42%)','Thermo+KT (11%)','Electrodynamics (32%)','Modern+Optics (17%)'],
+      datasets:[{data:[42,11,32,17],backgroundColor:['#D85A30','#1D9E75','#7F77DD','#5DCAA5'],borderColor:isDark?'#1c1c1a':'#fff',borderWidth:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}},animation:{duration:1000}}
+  });
+}
+
+function renderBar(){
+  const br=B[curBranch];
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  if(barC) barC.destroy();
+  barC=new Chart(document.getElementById('barChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:br.units.map(u=>u.name),
+      datasets:[{label:'%',data:br.units.map(u=>u.pct),backgroundColor:br.units.map(u=>u.priority==='top'?'#D85A30':u.priority==='mid'?'#BA7517':'#639922'),borderRadius:4,borderSkipped:false}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      scales:{
+        x:{grid:{color:isDark?'rgba(255,255,255,.06)':'rgba(0,0,0,.06)'},ticks:{color:isDark?'#aaa':'#666',font:{size:12},callback:v=>v+'%'},border:{display:false}},
+        y:{grid:{display:false},ticks:{color:isDark?'#ccc':'#444',font:{size:12}},border:{display:false}}
+      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.raw+'%'}}},
+      animation:{duration:600}
+    }
+  });
+}
+
+renderUnits(); renderLinks(); renderDonut(); renderBar();
+</script>
+</body>
+</html>
