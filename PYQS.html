@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE Quiz Hub — Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080f;
+  --bg2:#0c0d17;
+  --bg3:#11121e;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --txt:#eef0f8;
+  --txt2:#6b7394;
+  --txt3:#3a3f5c;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Unbounded',sans-serif;
+  --body:'Outfit',sans-serif;
+
+  /* Subject colors */
+  --phy:#3b82f6;
+  --phy2:#93c5fd;
+  --phy-g:rgba(59,130,246,.1);
+  --phy-glow:rgba(59,130,246,.25);
+
+  --che:#f59e0b;
+  --che2:#fcd34d;
+  --che-g:rgba(245,158,11,.1);
+  --che-glow:rgba(245,158,11,.22);
+
+  --mat:#ec4899;
+  --mat2:#f9a8d4;
+  --mat-g:rgba(236,72,153,.1);
+  --mat-glow:rgba(236,72,153,.22);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── Custom Cursor ── */
+#cur{width:8px;height:8px;background:#fff;border-radius:50%;position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s,height .15s;}
+#ring{width:32px;height:32px;border:1px solid rgba(255,255,255,.2);border-radius:50%;position:fixed;z-index:9998;pointer-events:none;transform:translate(-50%,-50%);}
+body:has(a:hover,.subject-card:hover,button:hover) #cur{width:20px;height:20px;}
+
+/* ── Background ── */
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.mesh-orb{position:absolute;border-radius:50%;filter:blur(110px);}
+.m1{width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,.15),transparent 70%);top:-200px;left:-150px;animation:orbFloat 20s ease-in-out infinite alternate;}
+.m2{width:500px;height:500px;background:radial-gradient(circle,rgba(245,158,11,.1),transparent 70%);bottom:-150px;right:-100px;animation:orbFloat 25s ease-in-out infinite alternate-reverse;}
+.m3{width:400px;height:400px;background:radial-gradient(circle,rgba(236,72,153,.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbFloat 18s ease-in-out infinite alternate;}
+@keyframes orbFloat{0%{transform:translate(0,0)}100%{transform:translate(30px,-30px)}}
+.m3{animation:orbFloat3 18s ease-in-out infinite alternate;}
+@keyframes orbFloat3{0%{transform:translate(-50%,-50%)}100%{transform:translate(calc(-50% + 20px),calc(-50% - 20px))}}
+
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:64px 64px;}
+.bg-noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(7,8,15,.8);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  animation:slideDown .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.logo-icon{width:34px;height:34px;position:relative;}
+.logo-icon svg{width:100%;height:100%;}
+.logo-text{font-family:var(--display);font-size:.9rem;font-weight:700;letter-spacing:.12em;color:var(--txt);}
+.logo-text span{color:var(--phy2);}
+
+.nav-center{display:flex;align-items:center;gap:6px;}
+.nav-tag{font-family:var(--mono);font-size:.58rem;padding:4px 12px;border-radius:100px;border:1px solid var(--border);color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;}
+
+.nav-right{display:flex;align-items:center;gap:10px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-status{font-family:var(--mono);font-size:.58rem;color:#22c55e;letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ── PAGE WRAP ── */
+.page{position:relative;z-index:10;max-width:1180px;margin:0 auto;padding:96px 28px 80px;}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:60px 0 56px;animation:fadeUp .8s ease both .1s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.hero-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:100px;
+  border:1px solid rgba(59,130,246,.25);
+  background:rgba(59,130,246,.06);
+  font-family:var(--mono);font-size:.58rem;color:var(--phy2);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hero-title{
+  font-family:var(--display);
+  font-size:clamp(2.8rem,8vw,7rem);
+  font-weight:900;
+  line-height:.95;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.ht1{display:block;color:var(--txt);}
+.ht2{
+  display:block;
+  background:linear-gradient(100deg,var(--phy2) 0%,var(--che2) 50%,var(--mat2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 5s ease infinite;
+}
+@keyframes shimmer{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(20deg)}}
+
+.hero-sub{font-family:var(--mono);font-size:.75rem;color:var(--txt2);line-height:1.9;letter-spacing:.3px;margin-bottom:0;}
+
+/* ── STATS ROW ── */
+.stats{display:flex;justify-content:center;gap:0;margin:40px 0 56px;border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .8s ease both .25s;}
+.stat{flex:1;padding:22px 20px;text-align:center;border-right:1px solid var(--border);position:relative;}
+.stat:last-child{border-right:none;}
+.stat-n{font-family:var(--display);font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:5px;}
+.stat-l{font-family:var(--mono);font-size:.55rem;color:var(--txt2);letter-spacing:2px;text-transform:uppercase;}
+
+/* ── SUBJECT CARDS ── */
+.subject-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:60px;animation:fadeUp .8s ease both .35s;}
+
+.subject-card{
+  position:relative;
+  border-radius:22px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+  overflow:hidden;
+  cursor:pointer;
+  text-decoration:none;
+  display:block;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),border-color .3s,box-shadow .3s;
+}
+.subject-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--sc),transparent);opacity:.8;}
+.subject-card::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--sg) 0%,transparent 70%);pointer-events:none;transition:opacity .4s;}
+.subject-card:hover{transform:translateY(-8px);border-color:var(--sc);box-shadow:0 4px 0 0 var(--sc),0 24px 80px rgba(0,0,0,.5),0 0 80px var(--sg);}
+.subject-card:hover::after{opacity:1.5;}
+
+.sc-phy{--sc:var(--phy2);--sg:var(--phy-glow);}
+.sc-che{--sc:var(--che2);--sg:var(--che-glow);}
+.sc-mat{--sc:var(--mat2);--sg:var(--mat-glow);}
+
+.sc-inner{padding:32px 28px 28px;}
+.sc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.sc-icon{
+  width:52px;height:52px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+}
+.sc-badge{
+  font-family:var(--mono);font-size:.52rem;letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 12px;border-radius:100px;border:1px solid var(--sc);
+  color:var(--sc);background:rgba(255,255,255,.04);
+}
+.sc-name{font-family:var(--display);font-size:1.7rem;font-weight:900;letter-spacing:.02em;color:var(--sc);margin-bottom:4px;line-height:1.1;}
+.sc-sub{font-family:var(--mono);font-size:.6rem;color:var(--txt2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;}
+.sc-desc{font-size:.82rem;color:var(--txt2);line-height:1.7;margin-bottom:24px;}
+
+.sc-meta{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.sc-tag{font-family:var(--mono);font-size:.6rem;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--txt2);}
+
+.sc-footer{display:flex;align-items:center;justify-content:space-between;padding-top:18px;border-top:1px solid var(--border);}
+.sc-qs{font-family:var(--display);font-size:1.4rem;font-weight:900;color:var(--sc);}
+.sc-qs-l{font-family:var(--mono);font-size:.52rem;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.sc-cta{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  padding:10px 20px;border-radius:10px;
+  color:var(--bg);background:var(--sc);
+  transition:opacity .2s,transform .2s;
+}
+.sc-cta svg{width:13px;height:13px;transition:transform .2s;}
+.subject-card:hover .sc-cta{opacity:.9;}
+.subject-card:hover .sc-cta svg{transform:translateX(3px);}
+
+/* ── ANALYZER SECTION ── */
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.sh-line{flex:1;height:1px;background:var(--border);}
+.sh-label{font-family:var(--mono);font-size:.58rem;color:var(--txt2);letter-spacing:3px;text-transform:uppercase;white-space:nowrap;}
+
+.analyzers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;animation:fadeUp .8s ease both .45s;}
+
+.analyzer{
+  border-radius:18px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+  overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.analyzer:hover{border-color:var(--ac,var(--phy2));box-shadow:0 0 40px var(--ag,var(--phy-glow));}
+
+.az-phy{--ac:var(--phy2);--ag:var(--phy-glow);--acol:var(--phy);}
+.az-che{--ac:var(--che2);--ag:var(--che-glow);--acol:var(--che);}
+.az-mat{--ac:var(--mat2);--ag:var(--mat-glow);--acol:var(--mat);}
+
+.az-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.az-title{font-family:var(--display);font-size:1rem;font-weight:700;color:var(--ac);letter-spacing:.04em;}
+.az-icon{font-size:1.1rem;}
+
+.az-body{padding:18px 20px;}
+
+/* Donut chart */
+.donut-wrap{display:flex;align-items:center;gap:20px;margin-bottom:18px;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{flex:1;}
+.dl-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dl-label{font-family:var(--mono);font-size:.6rem;color:var(--txt2);flex:1;letter-spacing:.5px;}
+.dl-val{font-family:var(--mono);font-size:.65rem;font-weight:600;color:var(--txt);}
+
+/* Mini bar */
+.az-bars{display:flex;flex-direction:column;gap:10px;}
+.az-bar-row{display:flex;flex-direction:column;gap:4px;}
+.az-bar-label{display:flex;justify-content:space-between;align-items:center;}
+.az-bar-name{font-family:var(--mono);font-size:.58rem;color:var(--txt2);letter-spacing:.5px;}
+.az-bar-pct{font-family:var(--mono);font-size:.58rem;color:var(--ac);font-weight:600;}
+.az-bar-track{height:4px;border-radius:100px;background:rgba(255,255,255,.05);overflow:hidden;}
+.az-bar-fill{height:100%;border-radius:100px;background:var(--ac);transition:width .8s cubic-bezier(.22,1,.36,1);}
+
+/* AZ footer */
+.az-footer{
+  padding:12px 20px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.az-link{
+  font-family:var(--mono);font-size:.58rem;color:var(--ac);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;
+  display:flex;align-items:center;gap:6px;
+  transition:gap .2s;
+}
+.az-link:hover{gap:10px;}
+.az-link svg{width:11px;height:11px;}
+.az-score{font-family:var(--display);font-size:.95rem;font-weight:700;color:var(--ac);}
+.az-score-l{font-family:var(--mono);font-size:.5rem;color:var(--txt2);letter-spacing:1px;text-transform:uppercase;}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:10;
+  border-top:1px solid var(--border);
+  padding:36px 28px;text-align:center;
+}
+.foot-logo{font-family:var(--display);font-size:1.1rem;font-weight:900;letter-spacing:.15em;
+  background:linear-gradient(90deg,var(--phy2),var(--che2),var(--mat2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.foot-copy{font-family:var(--mono);font-size:.56rem;color:var(--txt3);letter-spacing:1.5px;text-transform:uppercase;}
+
+@media(max-width:900px){
+  .subject-row,.analyzers{grid-template-columns:1fr;}
+  .stats{flex-wrap:wrap;}
+  .stat{flex:1 1 45%;border-bottom:1px solid var(--border);}
+}
+@media(max-width:600px){
+  .hero-title{font-size:2.6rem;}
+  nav .nav-center{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="ring"></div>
+
+<div class="bg-mesh">
+  <div class="mesh-orb m1"></div>
+  <div class="mesh-orb m2"></div>
+  <div class="mesh-orb m3"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="bg-noise"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="logo-icon">
+        <svg viewBox="0 0 34 34" fill="none">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#93c5fd"/>
+              <stop offset="50%" stop-color="#fcd34d"/>
+              <stop offset="100%" stop-color="#f9a8d4"/>
+            </linearGradient>
+          </defs>
+          <polygon points="17,3 31,29 3,29" stroke="url(#lg)" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          <line x1="10" y1="22" x2="24" y2="22" stroke="url(#lg)" stroke-width="1.4" opacity=".6"/>
+          <circle cx="17" cy="3" r="2" fill="url(#lg)"/>
+          <circle cx="31" cy="29" r="2" fill="url(#lg)"/>
+          <circle cx="3" cy="29" r="2" fill="url(#lg)"/>
+        </svg>
+      </div>
+      <div class="logo-text">JEE <span>Quiz Hub</span></div>
+    </a>
+    <div class="nav-center">
+      <span class="nav-tag">Practice</span>
+      <span class="nav-tag">2026–27</span>
+    </div>
+    <div class="nav-right">
+      <div class="live-dot"></div>
+      <span class="nav-status">Systems Live</span>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-chip">
+      <div class="live-dot"></div>
+      JEE Mains & Advanced · Portal
+    </div>
+    <h1 class="hero-title">
+      <span class="ht1">Crack</span>
+      <span class="ht2">JEE 2026</span>
+    </h1>
+    <p class="hero-sub">Physics · Chemistry · Mathematics — all in one place. Practice, analyze, dominate.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n" style="color:var(--phy2)">3</div>
+      <div class="stat-l">Subjects</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:var(--che2)">500+</div>
+      <div class="stat-l">Total Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:var(--mat2)">02-04-2026</div>
+      <div class="stat-l">Coverage</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="background:linear-gradient(90deg,var(--phy2),var(--mat2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Free</div>
+      <div class="stat-l">Always Free</div>
+    </div>
+  </div>
+
+  <!-- SUBJECT CARDS -->
+  <div class="section-head" style="margin-bottom:20px;">
+    <div class="sh-line"></div>
+    <span class="sh-label">Choose Subject</span>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="subject-row">
+
+    <!-- PHYSICS -->
+    <a class="subject-card sc-phy" href="physics-quiz.html">
+      <div class="sc-inner">
+        <div class="sc-head">
+          <div class="sc-icon">⚛️</div>
+          <span class="sc-badge">Live</span>
+        </div>
+        <div class="sc-name">Physics</div>
+        <div class="sc-sub">Mechanics · Electro · Optics · Modern</div>
+        <p class="sc-desc">Complete JEE PYQ bank — from Kinematics to Quantum. Topic-wise MCQs with detailed solutions.</p>
+        <div class="sc-meta">
+          <span class="sc-tag">Mechanics</span>
+          <span class="sc-tag">Electrostatics</span>
+          <span class="sc-tag">Optics</span>
+          <span class="sc-tag">Thermodynamics</span>
+        </div>
+        <div class="sc-footer">
+          <div>
+            <div class="sc-qs">30</div>
+            <div class="sc-qs-l">Questions</div>
+          </div>
+          <div class="sc-cta">
+            Start Quiz
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CHEMISTRY -->
+    <a class="subject-card sc-che" href="chemistry-quiz.html">
+      <div class="sc-inner">
+        <div class="sc-head">
+          <div class="sc-icon">🧪</div>
+          <span class="sc-badge">Live</span>
+        </div>
+        <div class="sc-name">Chemistry</div>
+        <div class="sc-sub">Physical · Organic · Inorganic</div>
+        <p class="sc-desc">Master mole concepts to reaction mechanisms. Full PYQ coverage for JEE Mains and Advanced.</p>
+        <div class="sc-meta">
+          <span class="sc-tag">Organic</span>
+          <span class="sc-tag">Inorganic</span>
+          <span class="sc-tag">Equilibrium</span>
+          <span class="sc-tag">Electrochemistry</span>
+        </div>
+        <div class="sc-footer">
+          <div>
+            <div class="sc-qs">30</div>
+            <div class="sc-qs-l">Questions</div>
+          </div>
+          <div class="sc-cta">
+            Start Quiz
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <!-- MATHS -->
+    <a class="subject-card sc-mat" href="maths-quiz.html">
+      <div class="sc-inner">
+        <div class="sc-head">
+          <div class="sc-icon">📐</div>
+          <span class="sc-badge">Live</span>
+        </div>
+        <div class="sc-name">Mathematics</div>
+        <div class="sc-sub">Algebra · Calculus · Coordinate · P&C</div>
+        <p class="sc-desc">From limits to 3D geometry — sharpen problem solving with JEE PYQs sorted by difficulty and topic.</p>
+        <div class="sc-meta">
+          <span class="sc-tag">Calculus</span>
+          <span class="sc-tag">Algebra</span>
+          <span class="sc-tag">Probability</span>
+          <span class="sc-tag">Geometry</span>
+        </div>
+        <div class="sc-footer">
+          <div>
+            <div class="sc-qs">30</div>
+            <div class="sc-qs-l">Questions</div>
+          </div>
+          <div class="sc-cta">
+            Start Quiz
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ANALYZERS -->
+  <div class="section-head">
+    <div class="sh-line"></div>
+    <span class="sh-label">Performance Analyzer</span>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="analyzers">
+
+    <!-- PHYSICS ANALYZER -->
+    <div class="analyzer az-phy">
+      <div class="az-header">
+        <div class="az-title">Physics</div>
+        <span class="az-icon">⚛️</span>
+      </div>
+      <div class="az-body">
+        <!-- Donut -->
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#3b82f6" stroke-width="10"
+              stroke-dasharray="201" stroke-dashoffset="121" stroke-linecap="round"
+              transform="rotate(-90 40 40)" opacity=".9"/>
+            <text x="40" y="44" text-anchor="middle" font-family="'Unbounded',sans-serif" font-size="13" font-weight="700" fill="#93c5fd">40%</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#22c55e"></div>
+              <div class="dl-label">Correct</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#ef4444"></div>
+              <div class="dl-label">Wrong</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:rgba(255,255,255,.15)"></div>
+              <div class="dl-label">Skipped</div>
+              <div class="dl-val">0</div>
+            </div>
+          </div>
+        </div>
+        <!-- Bars -->
+        <div class="az-bars">
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Mechanics</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--phy2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Electrostatics</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--phy2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Optics & Modern</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--phy2)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="az-footer">
+        <a class="az-link" href="jee_physics_analyzer.html">
+          Open Analyzer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </a>
+        <div style="text-align:right;">
+          <div class="az-score">—</div>
+          <div class="az-score-l">Best Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHEMISTRY ANALYZER -->
+    <div class="analyzer az-che">
+      <div class="az-header">
+        <div class="az-title">Chemistry</div>
+        <span class="az-icon">🧪</span>
+      </div>
+      <div class="az-body">
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="10"
+              stroke-dasharray="201" stroke-dashoffset="121" stroke-linecap="round"
+              transform="rotate(-90 40 40)" opacity=".9"/>
+            <text x="40" y="44" text-anchor="middle" font-family="'Unbounded',sans-serif" font-size="13" font-weight="700" fill="#fcd34d">40%</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#22c55e"></div>
+              <div class="dl-label">Correct</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#ef4444"></div>
+              <div class="dl-label">Wrong</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:rgba(255,255,255,.15)"></div>
+              <div class="dl-label">Skipped</div>
+              <div class="dl-val">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="az-bars">
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Physical Chem</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--che2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Organic Chem</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--che2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Inorganic Chem</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--che2)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="az-footer">
+        <a class="az-link" href="jee_chemistry_analyzer.html">
+          Open Analyzer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </a>
+        <div style="text-align:right;">
+          <div class="az-score">—</div>
+          <div class="az-score-l">Best Score</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATHS ANALYZER -->
+    <div class="analyzer az-mat">
+      <div class="az-header">
+        <div class="az-title">Mathematics</div>
+        <span class="az-icon">📐</span>
+      </div>
+      <div class="az-body">
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#ec4899" stroke-width="10"
+              stroke-dasharray="201" stroke-dashoffset="121" stroke-linecap="round"
+              transform="rotate(-90 40 40)" opacity=".9"/>
+            <text x="40" y="44" text-anchor="middle" font-family="'Unbounded',sans-serif" font-size="13" font-weight="700" fill="#f9a8d4">40%</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#22c55e"></div>
+              <div class="dl-label">Correct</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:#ef4444"></div>
+              <div class="dl-label">Wrong</div>
+              <div class="dl-val">0</div>
+            </div>
+            <div class="dl-item">
+              <div class="dl-dot" style="background:rgba(255,255,255,.15)"></div>
+              <div class="dl-label">Skipped</div>
+              <div class="dl-val">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="az-bars">
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Calculus</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--mat2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Algebra</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--mat2)"></div></div>
+          </div>
+          <div class="az-bar-row">
+            <div class="az-bar-label"><span class="az-bar-name">Coordinate Geo</span><span class="az-bar-pct">0%</span></div>
+            <div class="az-bar-track"><div class="az-bar-fill" style="width:0%;background:var(--mat2)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="az-footer">
+        <a class="az-link" href="jee_maths_analyzer.html">
+          Open Analyzer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 12 19 12"/><polyline points="13 6 19 12 13 18"/></svg>
+        </a>
+        <div style="text-align:right;">
+          <div class="az-score">—</div>
+          <div class="az-score-l">Best Score</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /analyzers -->
+
+</div><!-- /page -->
+
+<footer>
+  <div class="foot-logo">JEE QUIZ HUB</div>
+  <div class="foot-copy">Practice Portal · Physics · Chemistry · Mathematics · 2026</div>
+</footer>
+
+<script>
+/* Cursor */
+const cur=document.getElementById('cur'),ring=document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function rl(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(rl);})();
+
+/* Load analyzer data from localStorage */
+function loadAnalyzerData() {
+  ['phy','che','mat'].forEach(sub => {
+    const data = JSON.parse(localStorage.getItem(`jee_${sub}_stats`) || 'null');
+    if (!data) return;
+    
+    const az = document.querySelector(`.az-${sub}`);
+    if (!az) return;
+
+    const total = (data.correct||0) + (data.wrong||0) + (data.skipped||0);
+    const pct = total ? Math.round((data.correct/total)*100) : 0;
+    
+    // Update donut
+    const circle = az.querySelector('circle:nth-child(2)');
+    const label = az.querySelector('text');
+    const offset = 201 - (pct/100)*201;
+    if(circle) circle.setAttribute('stroke-dashoffset', offset);
+    if(label) label.textContent = pct + '%';
+
+    // Update legend
+    const vals = az.querySelectorAll('.dl-val');
+    if(vals[0]) vals[0].textContent = data.correct||0;
+    if(vals[1]) vals[1].textContent = data.wrong||0;
+    if(vals[2]) vals[2].textContent = data.skipped||0;
+
+    // Best score
+    const score = az.querySelector('.az-score');
+    if(score && data.bestScore != null) score.textContent = data.bestScore + '%';
+
+    // Topic bars
+    if(data.topics) {
+      const bars = az.querySelectorAll('.az-bar-fill');
+      const pcts = az.querySelectorAll('.az-bar-pct');
+      Object.values(data.topics).forEach((v,i) => {
+        if(bars[i]) bars[i].style.width = v + '%';
+        if(pcts[i]) pcts[i].textContent = v + '%';
+      });
+    }
+  });
+}
+loadAnalyzerData();
+
+/* Scroll reveal for bars */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.querySelectorAll('.az-bar-fill').forEach(b => {
+        const w = b.style.width;
+        b.style.width = '0%';
+        setTimeout(()=>{b.style.width=w;},100);
+      });
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('.analyzer').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
